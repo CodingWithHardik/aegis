@@ -11,7 +11,7 @@ export class AppError extends Error {
     constructor (message: string, statusCode: number = 500, status?: string) {
         super(message);
         this.statusCode = statusCode;
-        this.status = status ?? (statusCode < 500 ? "fail" : "error");
+        this.status = status ?? (statusCode < 500 ? "FAIL" : "ERROR");
         Error.captureStackTrace?.(this, this.constructor);
     }
 }
@@ -45,8 +45,8 @@ export const globalErrorHandler = new Elysia({
         (error as any).status && typeof (error as any).status === "string"
             ?(error as any).status
             : statusCode < 500
-                ? "fail"
-                : "error";
+                ? "FAIL"
+                : "ERROR";
     
     const isOperational = (error as any).isOperational === true || builtin !== undefined;
 
