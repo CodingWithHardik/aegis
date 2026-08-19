@@ -1,0 +1,20 @@
+model User {
+    id String @id @default(uuid())
+    name String
+    email String @unique
+    emailHash String? @unique
+    googleId String? @unique
+    passwordHash String?
+    phoneNo String?
+    isSuperAdmin Boolean @default(false)
+    banStatus BanStatus @default(UNBANNED)
+    team Team[]
+    members Member[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum BanStatus {
+    BANNED
+    UNBANNED
+}

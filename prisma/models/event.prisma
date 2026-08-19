@@ -1,0 +1,54 @@
+model Event {
+    id String @id @default(uuid())
+    year Int
+    type EventType
+    name String
+    team Team[]
+    committees Committee[]
+    members Member[]
+    startDate DateTime
+    endDate DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    @@unique([year, type])
+}
+
+enum EventType {
+    INTRA
+    MAIN
+}
+
+model Team {
+    id String @id @default(uuid())
+    name String
+    eventId String
+    event Event @relation(fields: [eventId], references: [id])
+    userId String
+    user User @relation(fields: [userId], references: [id])
+    role Role @default(ORGANIZER)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    @@unique([eventId, userId])
+}
+
+enum Role {
+    ORGANIZER
+    DELEGATE_AFFAIRS
+    FINANCE_MANAGER
+    ADMIN
+    SUPER_ADMIN
+}
+
+model Committee {
+    id String @id @default(uuid())
+    name String
+    slug String
+    agenda String
+    capacity Int @default(0)
+    eventId String
+    members Member[]
+    event Event @relation(fields: [eventId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    @@unique([slug, eventId])
+}

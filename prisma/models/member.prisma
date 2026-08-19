@@ -1,0 +1,30 @@
+model Member {
+    id String @id @default(uuid())
+    eventId String
+    event Event @relation(fields: [eventId], references: [id])
+    committeeId String?
+    committee Committee? @relation(fields: [committeeId], references: [id])
+    userId String
+    user User @relation(fields: [userId], references: [id])
+    role MemberRole @default(MEMBER)
+    portfolio String?
+    applicationStatus ApplicationStatus @default(PENDING)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    @@unique([eventId, userId])
+    @@index([eventId])
+    @@index([committeeId, eventId])
+}
+
+enum MemberRole {
+    BOARD_MEMBER
+    MEMBER
+}
+
+enum ApplicationStatus {
+    PENDING
+    PROCESSED
+    ALLOTED
+    APPROVED
+    REJECTED
+}
