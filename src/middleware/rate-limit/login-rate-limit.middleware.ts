@@ -13,8 +13,8 @@ const getIp = (request: Request, server: { requestIP?: Function } | null) =>
     server?.requestIP?.(request)?.address ??
     "unknown"
 
-export const loginRateLimiter = new Elysia({ name: "login-rate-limit" })
-.onRequest(async ({ request, server, set }) => {
+export const loginRateLimit = new Elysia({ name: "login-rate-limit" })
+.onBeforeHandle(async ({ request, server, set }) => {
     const ip = getIp(request, server);
     const key = `${PREFIX}:${ip}`
 

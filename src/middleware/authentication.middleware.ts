@@ -5,7 +5,7 @@ import { JwtPayloadType } from "../modules/auth/auth.types";
 import jwt from "jsonwebtoken";
 
 export const authMiddleware = new Elysia({ name: "auth-middleware" })
-.resolve({ as: "scoped" }, ({ headers }) => {
+.resolve(({ headers }) => {
     const authHeader = headers.authorization;
 
     if (!authHeader) throw new AppError("Authentication Required", 401);
@@ -25,3 +25,4 @@ export const authMiddleware = new Elysia({ name: "auth-middleware" })
         throw error;
     }
 })
+.as("scoped")
