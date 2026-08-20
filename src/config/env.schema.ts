@@ -12,6 +12,13 @@ export const envSchema = z.object({
     REDIS_PASSWORD: z.string().optional(),
     GLOBAL_RATE_LIMIT_WINDOW: z.coerce.number().default(1),
     GLOBAL_RATE_LIMIT_SIZE: z.coerce.number().default(1000),
+    LOGIN_RATE_LIMIT_WINDOW: z.coerce.number().default(1),
+    LOGIN_RATE_LIMIT_SIZE: z.coerce.number().default(5),
+    SALT_ROUNDS: z.coerce.number().default(12),
+    ACCESS_TOKEN_SECRET: z.string(),
+    ACCESS_TOKEN_EXPIRES_IN: z.string(),
+    REFRESH_TOKEN_SECRET: z.string(),
+    REFRESH_TOKEN_EXPIRES_IN: z.string(),
 })
 
 export type Env = z.infer<typeof envSchema>;
