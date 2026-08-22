@@ -1,8 +1,8 @@
-import { User } from "../../../.prisma/client";
+import { refreshToken, User } from "../../../.prisma/client";
 import { prisma } from "../../lib/prisma"
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery"
 import { IAuthRepository } from "./auth.interface"
-import { RegisterUserType } from "./auth.types";
+import { RefreshTokenType, RegisterUserType } from "./auth.types";
 
 export class AuthRepository implements IAuthRepository {
     async findUserByEmail(email: string): Promise<User | null> {
@@ -30,6 +30,23 @@ export class AuthRepository implements IAuthRepository {
             prisma.user.create({
                 data,
             }),
+        )
+    }
+
+    async createRefreshToken(data: RefreshTokenType): Promise<refreshToken> {
+        return measureQuery("createRefreshToken", () => 
+            prisma.refreshToken.create({
+                data: {
+                    token: data.token,
+                    expiresAt: new Date(data.expiry),
+                    familyId: data.familyId,
+                    user: {
+                        connect: {
+                            id: data.userId,
+                        }
+                    }
+                }
+            })
         )
     }
 }

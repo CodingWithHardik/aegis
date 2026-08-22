@@ -32,4 +32,4 @@ import authRouter from "./modules/auth/auth.route";
 
 app.use(authRouter);
 
-app.use(globalErrorHandler)
+app.use(globalErrorHandler);

@@ -11,5 +11,11 @@ export const loginUserSchema = z.object({
     password: z.string().trim().min(6, "Minimum 6 characters required").max(50, "Maximum 50 characters allowed"),
 }).strict();
 
+export const refreshAccessTokenSchema = z.object({
+    userId: z.string().trim(),
+    accessToken: z.string().trim(),
+}).strict();
+
 export type RegisterUserInputType = z.infer<typeof registerUserSchema>;
 export type LoginUserInputType = z.infer<typeof loginUserSchema>;
+export type RefreshTokenBodyType = z.infer<typeof refreshAccessTokenSchema>

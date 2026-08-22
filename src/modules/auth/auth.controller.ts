@@ -1,6 +1,6 @@
 import { catchAsync } from "../../utils/common/helpers/CacheAsync"
 import type { Context } from "elysia";
-import { LoginUserInputType, RegisterUserInputType } from "./auth.schema";
+import { LoginUserInputType, RefreshTokenBodyType, RegisterUserInputType } from "./auth.schema";
 import { authService } from "./auth.container";
 import { setAuthCookies } from "./auth.helper";
 import { sendResponse } from "../../utils/common/response/AppResponse";
@@ -54,6 +54,25 @@ export class AuthController {
             success: true,
             message: "User details fetched successfully",
             data: result,
+        })
+    })
+
+    refreshAccessToken = catchAsync(async (ctx: Context<{ body: RefreshTokenBodyType }>) => {
+        const refreshToken = ctx.cookie.refreshToken.value as string;
+        const userId = ctx.body.userId;
+        const authToken = ctx.body.accessToken;
+
+        const result = await authService.refreshAccessTokenService(refreshToken, userId, authToken);
+
+        setAuthCookies(ctx.cookie, result.refreshToken)
+
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "Access token refreshed successfully",
+            data: {
+                user: result.user,
+                accessToken: result.accessToken
+            }
         })
     })
 }

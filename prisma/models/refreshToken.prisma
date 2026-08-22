@@ -1,0 +1,18 @@
+model refreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  familyId  String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  status    RefreshStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum RefreshStatus {
+  ACTIVE
+  ROTATED
+  REVOKED
+  EXPIRY
+}

@@ -1,4 +1,5 @@
 import type { Context } from "elysia";
+import type { JwtPayload } from "jsonwebtoken";
 
 export type UserResponseType = {
     id: string;
@@ -25,9 +26,17 @@ export type RegisterUserType = {
     googleId: string;
 }
 
+export type RefreshTokenType = {
+    userId: string;
+    token: string;
+    expiry: Date;
+    familyId: string;
+}
+
 export type JwtPayloadType = {
     userId: string;
     email: string;
+    fId: string;
 }
 
 export type AuthUser = {
@@ -37,3 +46,8 @@ export type AuthUser = {
 export type AuthContext = Context & {
     user: AuthUser;
 }
+
+export type VerifyJwt = 
+    | { valid: true; payload: JwtPayload; status: "VALID" } 
+    | { valid: false; status: "INVALID" }
+    | { valid: false; payload: JwtPayload; status: "EXPIRED" };

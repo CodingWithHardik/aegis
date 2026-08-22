@@ -1,6 +1,9 @@
+import { env } from "../../config/env.config";
 import { logger } from "../../config/logger";
+import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/common/Errors/AppError";
-import { hashPassword, hashEmail, signAccessToken, signRefreshToken, comparePassword } from "./auth.helper";
+import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
+import { hashPassword, hashEmail, signAccessToken, generateRefreshToken, comparePassword, addDuration, hashRefreshToken, verifyRefreshToken, verifyAccessToken, generateFamilyId, rawRefreshToken } from "./auth.helper";
 import { IAuthRepository } from "./auth.interface";
 import { toUserResponse } from "./auth.response";
 import { LoginUserInputType, RegisterUserInputType } from "./auth.schema";
@@ -25,14 +28,21 @@ export class AuthService {
             emailHash: hashedEmail,
         });
 
+        const familyId = generateFamilyId();
+
         const accessToken = signAccessToken({
             userId: user.id,
-            email: hashedPassword
+            email: user.email,
+            fId: familyId,
         })
+        const rawToken = rawRefreshToken()
+        const refreshToken = generateRefreshToken(rawToken, familyId);
 
-        const refreshToken = signRefreshToken({
+        await this.authRepo.createRefreshToken({
             userId: user.id,
-            email: hashedEmail
+            token: hashRefreshToken(rawToken),
+            expiry: addDuration(env.REFRESH_TOKEN_EXPIRES_IN),
+            familyId: familyId,
         })
 
         logger.info({
@@ -67,14 +77,22 @@ export class AuthService {
             throw new AppError("Invalid Credentials", 401)
         };
 
+        const familyId = generateFamilyId();
+        
         const accessToken = signAccessToken({
             userId: user.id,
-            email: user.passwordHash
+            email: user.email,
+            fId: familyId,
         })
 
-        const refreshToken = signRefreshToken({
+        const rawToken = rawRefreshToken()
+        const refreshToken = generateRefreshToken(rawToken, familyId);
+
+        await this.authRepo.createRefreshToken({
             userId: user.id,
-            email: user.passwordHash
+            token: hashRefreshToken(rawToken),
+            expiry: addDuration(env.REFRESH_TOKEN_EXPIRES_IN),
+            familyId: familyId,
         })
 
         logger.info({
@@ -97,5 +115,86 @@ export class AuthService {
         }
 
         return toUserResponse(user)
+    }
+
+    async refreshAccessTokenService(refreshToken: string, userId: string, authToken: string) {
+        const VerifyAccessToken = verifyAccessToken(authToken);
+
+        if (VerifyAccessToken.status === "VALID" || VerifyAccessToken.status === "INVALID") {
+            throw new AppError(VerifyAccessToken.status === "VALID" ? "Access Token Not Expired" : "Invalid Access Token", 401);
+        }
+        if (VerifyAccessToken.payload.userId !== userId) {
+            throw new AppError("Invalid Access Token", 401);
+        }
+        const AccessTokenfamilyId = VerifyAccessToken.payload.fId;
+        const RefreshTokenfamilyId = refreshToken.split(".")[1];
+        if (AccessTokenfamilyId !== RefreshTokenfamilyId) {
+            throw new AppError("Invalid Access Token", 401);
+        }
+        const refreshTokenRecord = refreshToken.split(".")[0];
+        const verifiedToken = await verifyRefreshToken(refreshTokenRecord, async (token) => 
+                await measureQuery("findRefreshToken", () => 
+                    prisma.refreshToken.findUnique({
+                    where: {
+                        token,
+                        userId,
+                        status: "ACTIVE",
+                        familyId: RefreshTokenfamilyId
+                    }
+                })
+            )
+        )
+
+        if (!verifiedToken) {
+            throw new AppError("Invalid Refresh Token", 401);
+        }
+
+        const user = await this.authRepo.findUserById(userId);
+
+        if (!user) {
+            throw new AppError("Invalid User", 401);
+        }
+
+        measureQuery("markRefreshTokenUsed", () => 
+            prisma.refreshToken.update({
+                where: {
+                    token: hashRefreshToken(refreshTokenRecord),
+                    userId: userId,
+                    status: 'ACTIVE'
+                },
+                data: {
+                    status: "ROTATED"
+                }
+            })
+        )
+
+        const familyId = generateFamilyId();
+        
+        const accessToken = signAccessToken({
+            userId: userId,
+            email: user.email,
+            fId: familyId
+        })
+
+        const rawToken = rawRefreshToken()
+        const refreshTokenNew = generateRefreshToken(rawToken, familyId);
+
+        await this.authRepo.createRefreshToken({
+            userId: userId,
+            token: hashRefreshToken(rawToken),
+            expiry: addDuration(env.REFRESH_TOKEN_EXPIRES_IN),
+            familyId: familyId
+        })
+
+        logger.info({
+            event: "TOKEN_REFRESHED",
+            userId: userId,
+        })
+
+        return {
+            user: toUserResponse(user),
+            accessToken,
+            refreshToken: refreshTokenNew,
+        }
     }
 }
