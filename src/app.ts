@@ -17,6 +17,7 @@ app.use(
     credentials: true,
   }),
 );
+app.use(globalErrorHandler);
 
 const healthController = new HealthController();
 
@@ -31,5 +32,3 @@ import { HealthController } from "./modules/health-check/health.controller";
 import authRouter from "./modules/auth/auth.route";
 
 app.use(authRouter);
-
-app.use(globalErrorHandler);
