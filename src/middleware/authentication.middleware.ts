@@ -7,7 +7,7 @@ export const authMiddleware = new Elysia({ name: "auth-middleware" })
     const authHeader = headers.authorization;
 
     if (!authHeader) throw new AppError("Authentication Required", 401);
-    if (!authHeader.startsWith("Bearer ")) throw new AppError("Invlaid format for authentication header", 401);
+    if (!authHeader.startsWith("Bearer ")) throw new AppError("Invalid format for authentication header", 401);
 
     const accessToken = authHeader.split(" ")[1];
     if (!accessToken) throw new AppError("Access Token Missing", 401)
