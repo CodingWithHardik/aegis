@@ -29,6 +29,6 @@ app.use(globalRateLimiter)
 
 import { backendInstance } from "./middleware/backend-instance.middleware";
 import { HealthController } from "./modules/health-check/health.controller";
-import authRouter from "./modules/auth/auth.route";
+import { versionManager } from "./plugins/version/version.manager";
 
-app.use(authRouter);
+app.use(versionManager);

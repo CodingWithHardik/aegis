@@ -2,6 +2,10 @@ import z from "zod";
 
 export const envSchema = z.object({
     NODE_ENV: z.enum(["production", "testing", "development"]),
+    TESTING: z.preprocess(
+        (value) => value === "true",
+        z.boolean().default(false),
+    ),
     PORT: z.coerce.number().default(3000),
     FRONTEND_URL: z.url(),
     HOSTNAME: z.string().default("localhost"),
