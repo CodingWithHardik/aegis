@@ -72,11 +72,15 @@ export const verifyAccessToken = (token: string): VerifyJwt => {
     }
 }
 
-export const verifyRefreshToken = async <T extends refreshToken>(raw: string, query: (token: string) => Promise<T | null>): Promise<boolean> => {
+export const verifyRefreshToken = async <T extends refreshToken>(raw: string, userId: string, familyId: string, query: (token: string) => Promise<T | null>): Promise<boolean> => {
     const token = hashRefreshToken(raw);
     const result: T | null = await query(token);
     
     if (!result) return false;
+    if (result.status !== "ACTIVE") return false;
+    if (result.familyId !== familyId) return false;
+    if (result.userId !== userId) return false;
+    
     return result.expiresAt > new Date();
 }
 
