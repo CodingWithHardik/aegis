@@ -164,12 +164,8 @@ export class AuthService {
       userId,
       RefreshTokenfamilyId,
       async (token) =>
-        await cachedQuery(
+        await measureQuery(
           "findRefreshToken",
-          {
-            key: cacheKeys.refreshToken(token),
-            ttl: (row) => Math.min(ttlUntil(row.expiresAt), 600),
-          },
           () =>
             prisma.refreshToken.findUnique({
               where: {
@@ -222,11 +218,6 @@ export class AuthService {
       expiry: addDuration(env.REFRESH_TOKEN_EXPIRES_IN),
       familyId: familyId,
     });
-
-    await invalidate(
-      cacheKeys.refreshToken(hashRefreshToken(refreshTokenRecord)),
-      cacheKeys.refreshToken(hashRefreshToken(rawToken)),
-    );
 
     logger.info({
       event: "TOKEN_REFRESHED",

@@ -43,7 +43,6 @@ export class AuthRepository implements IAuthRepository {
     }
 
     async createRefreshToken(data: RefreshTokenType): Promise<refreshToken> {
-        await invalidate(cacheKeys.refreshToken(data.token));
         return measureQuery("createRefreshToken", () => 
             prisma.refreshToken.create({
                 data: {
