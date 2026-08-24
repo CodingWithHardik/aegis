@@ -10,12 +10,12 @@ type CacheOptions<T> = {
 export const cachedQuery = async <T>(
   operation: string,
   { key, ttl = 300 }: CacheOptions<T>,
-  query: () => Promise<T>,
+  query: () => T | Promise<T>,
 ): Promise<T> => {
   try {
     const cached = await redis.get(key);
     if (cached !== null) {
-      logger.info({ event: "CACHE_HIT", operation, key });
+      logger.info({ event: "CACHE_HIT", operation });
       return JSON.parse(cached) as T;
     }
     logger.info({ event: "CACHE_MISS", operation, key });
@@ -48,7 +48,6 @@ export const cachedQuery = async <T>(
       logger.info({
         event: "CACHE_SKIP_EXPIRED",
         operation,
-        key,
       });
     }
   }

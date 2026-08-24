@@ -22,6 +22,7 @@ import {
 import { IAuthRepository } from "./auth.interface";
 import { toUserResponse } from "./auth.response";
 import { LoginUserInputType, RegisterUserInputType } from "./auth.schema";
+import { VerifyJwt } from "./auth.types";
 
 export class AuthService {
   constructor(private authRepo: IAuthRepository) {}
@@ -137,7 +138,17 @@ export class AuthService {
     userId: string,
     authToken: string,
   ) {
-    const VerifyAccessToken = verifyAccessToken(authToken);
+    const VerifyAccessToken = await cachedQuery(
+      "verifyAccessToken",
+      {
+        key: cacheKeys.accessToken(authToken),
+        ttl: (row: VerifyJwt) =>
+          row.status === "VALID" && row.payload.exp
+            ? Math.min(ttlUntil(new Date(row.payload.exp * 1000)), 300)
+            : 0,
+      },
+      async () => await verifyAccessToken(authToken),
+    );
 
     if (
       VerifyAccessToken.status === "VALID" ||
@@ -164,17 +175,15 @@ export class AuthService {
       userId,
       RefreshTokenfamilyId,
       async (token) =>
-        await measureQuery(
-          "findRefreshToken",
-          () =>
-            prisma.refreshToken.findUnique({
-              where: {
-                token,
-                userId,
-                status: "ACTIVE",
-                familyId: RefreshTokenfamilyId,
-              },
-            }),
+        await measureQuery("findRefreshToken", () =>
+          prisma.refreshToken.findUnique({
+            where: {
+              token,
+              userId,
+              status: "ACTIVE",
+              familyId: RefreshTokenfamilyId,
+            },
+          }),
         ),
     );
 

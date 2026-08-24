@@ -3,7 +3,7 @@ import { logger } from "../../../config/logger";
 
 export const measureQuery = async <T>(
     operation: string,
-    query: () => Promise<T>
+    query: () => T | Promise<T>
 ): Promise<T> => {
     const start = performance.now();
 
