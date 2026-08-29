@@ -40,7 +40,7 @@ export type JwtPayloadType = {
 }
 
 export type AuthUser = {
-    userId: string;
+    id: string;
 };
 
 export type AuthContext = Context & {

@@ -3,6 +3,9 @@ model Event {
     year Int
     type EventType
     name String
+    about String?
+    isDeleted Boolean @default(false)
+    status EventStatus @default(ACTIVE)
     team Team[]
     committees Committee[]
     members Member[]
@@ -13,6 +16,11 @@ model Event {
     @@unique([year, type])
 }
 
+enum EventStatus {
+    ACTIVE
+    INACTIVE
+}
+
 enum EventType {
     INTRA
     MAIN
@@ -21,6 +29,7 @@ enum EventType {
 model Team {
     id String @id @default(uuid())
     name String
+    about String
     eventId String
     event Event @relation(fields: [eventId], references: [id])
     userId String

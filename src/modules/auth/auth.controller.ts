@@ -46,7 +46,7 @@ export class AuthController {
     })
 
     getLoggedInUser = catchAsync(async (ctx: AuthContext) => {
-        const userId = ctx.user.userId as string;
+        const userId = ctx.user.id as string;
 
         const result = await authService.getLoggedInUserDetails(userId);
 

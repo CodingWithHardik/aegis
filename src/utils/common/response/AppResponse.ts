@@ -1,5 +1,5 @@
 import type { Context } from "elysia";
-import type { ApiResponse } from "../../../types/types";
+import type { ApiResponse } from "../../../types/ApiResponse";
 
 export const sendResponse = <T>(
     set: Context["set"],
