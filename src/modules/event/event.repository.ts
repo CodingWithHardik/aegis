@@ -29,9 +29,10 @@ export class EventRepository implements IEventRepository {
             () =>
                 prisma.event.findUnique({
                     where: {
-                        year_type: {
+                        year_type_deletedTime: {
                             year,
                             type,
+                            deletedTime: ""
                         },
                         isDeleted: false,
                     }

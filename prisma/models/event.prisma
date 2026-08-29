@@ -5,6 +5,9 @@ model Event {
     name String
     about String?
     isDeleted Boolean @default(false)
+    deletedTime String @default("")
+    deletedBy String?
+    deletedReason String?
     status EventStatus @default(ACTIVE)
     team Team[]
     committees Committee[]
@@ -13,7 +16,7 @@ model Event {
     endDate DateTime
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    @@unique([year, type])
+    @@unique([year, type, deletedTime])
 }
 
 enum EventStatus {
