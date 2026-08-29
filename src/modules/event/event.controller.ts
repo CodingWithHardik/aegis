@@ -1,7 +1,6 @@
 import { Context } from "elysia"
 import { catchAsync } from "../../utils/common/helpers/CacheAsync"
-import { CreateEventInputType } from "./event.schema"
-import { User } from "../../../.prisma/client";
+import { CreateEventInputType, UpdateEventInputType } from "./event.schema"
 import { AuthSingleton } from "./event.types";
 import { AppError } from "../../middleware/error.middleware";
 import { eventService } from "./event.container";
@@ -29,5 +28,20 @@ export class EventController {
             }
         })
         
+    })
+
+    updateEvent = catchAsync(async (ctx: Context<{ body: UpdateEventInputType }, AuthSingleton>) => {
+        const result = await eventService.updateEventService(
+            ctx.body,
+            ctx.user,
+        )
+
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "Event Updated Successfully",
+            data: {
+                event: result
+            }
+        })
     })
 }

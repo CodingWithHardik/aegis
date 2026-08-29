@@ -4,4 +4,5 @@ export const cacheKeys = {
     accessToken: (token: string) => `accessToken:${token}`,
     event: (eventId: string) => `event:${eventId}`,
     eventByYearAndType: (year: number, type: "INTRA" | "MAIN") => `event:${year}:${type}`,
+    teamByUserIdAndEventId: (userId: string, eventId: string) => `team:eventId:${eventId}:userId:${userId}`,
 }
