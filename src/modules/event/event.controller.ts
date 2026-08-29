@@ -8,17 +8,7 @@ import { sendResponse } from "../../utils/common/response/AppResponse";
 
 export class EventController {
     createEvent = catchAsync(async (ctx: Context<{ body: CreateEventInputType }, AuthSingleton>) => {
-        const { type, name, about, startDate, endDate } = ctx.body;
-        
-        if (!ctx.user.isSuperAdmin) return new AppError("Unauthorized", 403);
-
-        const result = await eventService.createEventService({
-            type,
-            name,
-            about,
-            startDate,
-            endDate,
-        }, ctx.user.id)
+        const result = await eventService.createEventService(ctx.body, ctx.user)
 
         return sendResponse(ctx.set, 201, {
             success: true,

@@ -8,7 +8,12 @@ import { CreateEventInputType, UpdateEventInputType } from "./event.schema";
 export class EventService {
     constructor(private eventRepo: IEventRepository) {}
 
-    async createEventService(data: CreateEventInputType, userId: string) {
+    async createEventService(data: CreateEventInputType, user: User) {
+        const admin = user.isSuperAdmin;
+        if (!admin) {
+            throw new AppError("Unauthorized", 403);
+        }
+
         const existingEvent = await this.eventRepo.findEventByYearAndType(
             new Date().getFullYear(), 
             data.type
@@ -24,7 +29,7 @@ export class EventService {
 
         logger.info({
             event: "EVENT_CREATED",
-            userId: userId,
+            userId: user.id,
             eventId: event.id,
         })
 
