@@ -4,7 +4,7 @@ import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { IEventRepository } from "./event.interface";
-import { CreateEventInputType, UpdateEventInputType } from "./event.schema";
+import { CreateEventInputType, DeleteEventInputType, UpdateEventInputType } from "./event.schema";
 
 export class EventRepository implements IEventRepository {
     async createEvent(data: CreateEventInputType): Promise<Event> {
@@ -79,7 +79,7 @@ export class EventRepository implements IEventRepository {
     async updateEventById(eventId: string, data: Partial<UpdateEventInputType>): Promise<Event> {
         const { eventId: _, ...updatedData } = data;
         await invalidate(cacheKeys.event(eventId));
-        return measureQuery("updateEventById", () =>
+        const query = await measureQuery("updateEventById", () =>
             prisma.event.update({
                 where: {
                     id: eventId
@@ -87,5 +87,26 @@ export class EventRepository implements IEventRepository {
                 data: updatedData,
             }) 
         )
+        await invalidate(cacheKeys.eventByYearAndType(query.year, query.type));
+        return query;
+    }
+
+    async deleteEventById(userId: string, data: DeleteEventInputType): Promise<Event> {
+        await invalidate(cacheKeys.event(data.eventId));
+        const query = await measureQuery("deleteEventById", () => 
+            prisma.event.update({
+                where: {
+                    id: data.eventId,
+                },
+                data: {
+                    isDeleted: true,
+                    deletedReason: data.reason,
+                    deletedBy: userId,
+                    deletedTime: new Date().toISOString(),
+                }
+            })
+        )
+        await invalidate(cacheKeys.eventByYearAndType(query.year, query.type));
+        return query;
     }
 }

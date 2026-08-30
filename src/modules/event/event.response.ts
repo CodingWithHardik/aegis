@@ -11,3 +11,9 @@ export const toEventResponse = (event: EventResponseType) => {
         endDate: event.endDate,
     }
 }
+
+export const toEventDeleteResponse = (event: EventResponseType) => {
+    return {
+        id: event.id
+    }
+}

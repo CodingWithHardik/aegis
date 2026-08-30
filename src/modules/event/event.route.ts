@@ -2,7 +2,7 @@ import Elysia from "elysia";
 import { authMiddleware } from "../../middleware/authentication.middleware";
 import { validated } from "../../utils/common/validation/validated";
 import { loginRateLimit } from "../../middleware/rate-limit/login-rate-limit.middleware"
-import { createEventSchema, updateEventSchema } from "./event.schema";
+import { createEventSchema, deleteEventSchema, updateEventSchema } from "./event.schema";
 import { EventController } from "./event.controller";
 import { AuthSingleton } from "./event.types";
 
@@ -28,6 +28,17 @@ router.use(
             ...validated<typeof updateEventSchema, AuthSingleton>(
                 updateEventSchema,
                 eventController.updateEvent
+            )
+        )
+)
+
+router.use(
+    new Elysia()
+        .use(authMiddleware)
+        .post("/delete", 
+            ...validated<typeof deleteEventSchema, AuthSingleton>(
+                deleteEventSchema,
+                eventController.deleteEvent
             )
         )
 )

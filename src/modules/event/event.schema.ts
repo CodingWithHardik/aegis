@@ -24,5 +24,11 @@ export const updateEventSchema = z.object({
     }
 );
 
+export const deleteEventSchema = z.object({
+    eventId: z.string().trim(),
+    reason: z.string().trim().min(3, "Minimum 3 characters required").max(200, "Maximum 200 characters allowed"),  
+}).strict();
+
 export type CreateEventInputType = z.infer<typeof createEventSchema>;
 export type UpdateEventInputType = z.infer<typeof updateEventSchema>;
+export type DeleteEventInputType = z.infer<typeof deleteEventSchema>;

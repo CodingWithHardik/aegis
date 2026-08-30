@@ -1,5 +1,5 @@
 import { Event, Team } from "../../../.prisma/client";
-import { CreateEventInputType } from "./event.schema";
+import { CreateEventInputType, DeleteEventInputType } from "./event.schema";
 
 export interface IEventRepository {
     createEvent(data: CreateEventInputType): Promise<Event>;
@@ -11,4 +11,6 @@ export interface IEventRepository {
     teamByUserIdAndEventId(userId: string, eventId: string): Promise<Team | null>;
 
     updateEventById(eventId: string, data: Partial<CreateEventInputType>): Promise<Event>;
+
+    deleteEventById(userId: string, data: DeleteEventInputType): Promise<Event>;
 }

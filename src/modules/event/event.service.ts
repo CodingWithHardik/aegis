@@ -2,8 +2,8 @@ import { User } from "../../../.prisma/client";
 import { logger } from "../../config/logger";
 import { AppError } from "../../utils/common/Errors/AppError";
 import { IEventRepository } from "./event.interface";
-import { toEventResponse } from "./event.response";
-import { CreateEventInputType, UpdateEventInputType } from "./event.schema";
+import { toEventDeleteResponse, toEventResponse } from "./event.response";
+import { CreateEventInputType, DeleteEventInputType, UpdateEventInputType } from "./event.schema";
 
 export class EventService {
     constructor(private eventRepo: IEventRepository) {}
@@ -67,6 +67,28 @@ export class EventService {
         })
 
         return toEventResponse(result)
+    }
 
+    async deleteEventService(data: DeleteEventInputType, user: User) {
+        const admin = user.isSuperAdmin;
+        if (!admin) {
+            throw new AppError("Unauthorized", 403)
+        }
+
+        const event = await this.eventRepo.findEventById(data.eventId);
+        if (!event) {
+            throw new AppError("Event Not Found", 404);
+        }
+
+        const result = await this.eventRepo.deleteEventById(user.id, data);
+
+        logger.info({
+            event: "EVENT_DELETE",
+            userId: user.id,
+            isSuperAdmin: user.isSuperAdmin,
+            eventId: result.id,
+        })
+
+        return toEventDeleteResponse(result)
     }
 }
