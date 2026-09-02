@@ -1,9 +1,10 @@
 import { User } from "../../../.prisma/client";
 import { logger } from "../../config/logger";
 import { AppError } from "../../utils/common/Errors/AppError";
+import { filterEvent, getEvents } from "./event.helper";
 import { IEventRepository } from "./event.interface";
-import { toEventDeleteResponse, toEventResponse } from "./event.response";
-import { CreateEventInputType, DeleteEventInputType, UpdateEventInputType } from "./event.schema";
+import { toEventDeleteResponse, toEventGetResponse, toEventResponse } from "./event.response";
+import { CreateEventInputType, DeleteEventInputType, UpdateEventInputType, GetEventInputType } from "./event.schema";
 
 export class EventService {
     constructor(private eventRepo: IEventRepository) {}
@@ -23,9 +24,12 @@ export class EventService {
             throw new AppError(`Event of type ${data.type} already exists for the current year`, 400);
         }
 
-        const event = await this.eventRepo.createEvent({
-            ...data,
-        });
+        const event = await this.eventRepo.createEvent(
+            {
+                ...data,
+            },
+            user.id,
+        );
 
         logger.info({
             event: "EVENT_CREATED",
@@ -55,6 +59,7 @@ export class EventService {
         }
 
         const result = await this.eventRepo.updateEventById(
+            user.id,
             data.eventId, 
             data
         )
@@ -90,5 +95,32 @@ export class EventService {
         })
 
         return toEventDeleteResponse(result)
+    }
+
+    async getEventService(data: GetEventInputType, user: User) {
+        const admin = user.isSuperAdmin;
+        
+        const events = await getEvents(
+            admin,
+            user,
+            (userId) => this.eventRepo.getEventByUser(userId),
+            (userId) => this.eventRepo.getEventByAdmin(userId)
+        )
+
+        const eventResponse = filterEvent(events, data.eventId, data.year, data.type)
+
+        return toEventGetResponse(eventResponse)
+    }
+
+    async getAllEventsService(user: User) {
+        const admin = user.isSuperAdmin;
+
+        if (!admin) {
+            throw new AppError("Unauthorized", 403);
+        }
+
+        const events = await this.eventRepo.getAllEvents();
+
+        return toEventGetResponse(events)
     }
 }

@@ -7,8 +7,9 @@ import { IEventRepository } from "./event.interface";
 import { CreateEventInputType, DeleteEventInputType, UpdateEventInputType } from "./event.schema";
 
 export class EventRepository implements IEventRepository {
-    async createEvent(data: CreateEventInputType): Promise<Event> {
+    async createEvent(data: CreateEventInputType, userId: string): Promise<Event> {
         await invalidate(cacheKeys.eventByYearAndType(new Date().getFullYear(), data.type));
+        await invalidate(cacheKeys.getEventByUser(userId));
         return measureQuery("createEvent", () =>
             prisma.event.create({
                 data: {
@@ -76,9 +77,10 @@ export class EventRepository implements IEventRepository {
         )
     }
 
-    async updateEventById(eventId: string, data: Partial<UpdateEventInputType>): Promise<Event> {
+    async updateEventById(userId: string,eventId: string, data: Partial<UpdateEventInputType>): Promise<Event> {
         const { eventId: _, ...updatedData } = data;
         await invalidate(cacheKeys.event(eventId));
+        await invalidate(cacheKeys.getEventByUser(userId))
         const query = await measureQuery("updateEventById", () =>
             prisma.event.update({
                 where: {
@@ -93,6 +95,7 @@ export class EventRepository implements IEventRepository {
 
     async deleteEventById(userId: string, data: DeleteEventInputType): Promise<Event> {
         await invalidate(cacheKeys.event(data.eventId));
+        await invalidate(cacheKeys.getEventByUser(userId))
         const query = await measureQuery("deleteEventById", () => 
             prisma.event.update({
                 where: {
@@ -108,5 +111,48 @@ export class EventRepository implements IEventRepository {
         )
         await invalidate(cacheKeys.eventByYearAndType(query.year, query.type));
         return query;
+    }
+
+    async getEventByUser(userId: string): Promise<Event[]> {
+        return cachedQuery(
+            "getEventByUser",
+            {
+                key: cacheKeys.getEventByUser(userId),
+                ttl: 600
+            },
+            () => 
+                prisma.event.findMany({
+                    where: {
+                        team: {
+                            some: {
+                                userId,
+                            }
+                        },
+                        isDeleted: false,
+                    }
+                })
+        )
+    }
+
+    async getEventByAdmin(userId: string): Promise<Event[]> {
+        return cachedQuery(
+            "getEventByAdmin",
+            {
+                key: cacheKeys.getEventByUser(userId),
+                ttl: 600
+            },
+            () => 
+                prisma.event.findMany({
+                    where: {
+                        isDeleted: false,
+                    }
+                })
+        )
+    }
+
+    async getAllEvents(): Promise<Event[]> {
+        return measureQuery("getAllEvents", () =>
+            prisma.event.findMany()
+        )
     }
 }

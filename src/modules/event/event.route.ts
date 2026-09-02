@@ -1,14 +1,32 @@
 import Elysia from "elysia";
 import { authMiddleware } from "../../middleware/authentication.middleware";
 import { validated } from "../../utils/common/validation/validated";
-import { loginRateLimit } from "../../middleware/rate-limit/login-rate-limit.middleware"
-import { createEventSchema, deleteEventSchema, updateEventSchema } from "./event.schema";
+import { createEventSchema, deleteEventSchema, getEventSchema, updateEventSchema } from "./event.schema";
 import { EventController } from "./event.controller";
 import { AuthSingleton } from "./event.types";
 
 const router = new Elysia({ prefix: "/event" });
 
 const eventController = new EventController();
+
+router.use(
+    new Elysia()
+        .use(authMiddleware)
+        .get("/",
+            ...validated<typeof getEventSchema, AuthSingleton>(
+                getEventSchema,
+                eventController.getEvent
+            )
+        )
+)
+
+router.use(
+    new Elysia()
+        .use(authMiddleware)
+        .get("/all",
+            eventController.getAllEvents
+        )
+)
 
 router.use(
     new Elysia()

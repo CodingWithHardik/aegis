@@ -1,6 +1,6 @@
 import { Context } from "elysia"
 import { catchAsync } from "../../utils/common/helpers/CacheAsync"
-import { CreateEventInputType, DeleteEventInputType, UpdateEventInputType } from "./event.schema"
+import { CreateEventInputType, DeleteEventInputType, GetEventInputType, UpdateEventInputType } from "./event.schema"
 import { AuthSingleton } from "./event.types";
 import { AppError } from "../../middleware/error.middleware";
 import { eventService } from "./event.container";
@@ -46,6 +46,33 @@ export class EventController {
             message: "Event Deleted Successfully",
             data: {
                 event: result
+            }
+        })
+    })
+
+    getEvent = catchAsync(async (ctx: Context<{ body: GetEventInputType }, AuthSingleton>) => {
+        const result = await eventService.getEventService(
+            ctx.body,
+            ctx.user
+        )
+        
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "Event Fetched Successfully",
+            data: {
+                event: result
+            }
+        })
+    })
+
+    getAllEvents = catchAsync(async (ctx: Context<{}, AuthSingleton>) => {
+        const result = await eventService.getAllEventsService(ctx.user);
+        
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "All Events Fetched Successfully",
+            data: {
+                events: result
             }
         })
     })

@@ -17,3 +17,7 @@ export const toEventDeleteResponse = (event: EventResponseType) => {
         id: event.id
     }
 }
+
+export const toEventGetResponse = (event: EventResponseType[]) => {
+    return event.map(( event ) => toEventResponse(event))
+}

@@ -1,13 +1,13 @@
 import type { Context } from "elysia";
-import { ZodObject } from "zod";
+import { ZodType } from "zod";
 import { AppError } from "../utils/common/Errors/AppError";
 
 type validateTarget = "body" | "params" | "query";
 
 export const validate = 
-    (schema: ZodObject<any>, target: validateTarget = "body") =>
+    (schema: ZodType<any>, target: validateTarget = "body") =>
     (ctx: Context) => {
-        const data = ctx[target];
+        const data = ctx[target] ?? {};
         const result = schema.safeParse(data);
         if (!result.success) {
             const errors = result.error.issues.map((error) => ({

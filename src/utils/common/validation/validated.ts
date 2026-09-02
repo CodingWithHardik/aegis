@@ -1,15 +1,15 @@
 import { Context, SingletonBase } from "elysia";
-import z, { ZodObject } from "zod";
+import z, { ZodType } from "zod";
 import { validate } from "../../../middleware/validate.middleware";
 import { emptySingleton } from "../../../types/emptySingleton";
 
 export type ValidatedContext<
-    S extends ZodObject<any>,
+    S extends ZodType<any>,
     Singleton extends SingletonBase = typeof emptySingleton
 > = Context<{ body: z.infer<S> }, Singleton>;
 
 export const validated = <
-    S extends ZodObject<any>,
+    S extends ZodType<any>,
     Singleton extends SingletonBase = typeof emptySingleton
 >(
     schema: S,
