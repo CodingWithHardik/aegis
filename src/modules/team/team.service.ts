@@ -1,5 +1,6 @@
 import { User } from "../../../.prisma/client";
 import { logger } from "../../config/logger";
+import { AppError } from "../../middleware/error.middleware";
 import { filterGetTeam, getRoleOfUser } from "./team.helper";
 import { ITeamRepository } from "./team.interface";
 import { toTeamGetResponse } from "./team.response";
@@ -9,8 +10,9 @@ export class TeamService {
     constructor(private teamRepo: ITeamRepository) {}
 
     async getTeam(data: GetTeamInputType, user: User) {
-        
         if (!user.isSuperAdmin) {
+            if (!data.eventId && !data.teamId) throw new AppError("EventId or TeamId is required", 400);
+            
             const getUserRole = await getRoleOfUser(
                 this.teamRepo.getTeamByEventIdAndUserId,
                 this.teamRepo.getTeamByTeamIdAndUserId,
