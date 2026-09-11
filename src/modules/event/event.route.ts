@@ -3,7 +3,7 @@ import { authMiddleware } from "../../middleware/authentication.middleware";
 import { validated } from "../../utils/common/validation/validated";
 import { createEventSchema, deleteEventSchema, getEventSchema, updateEventSchema } from "./event.schema";
 import { EventController } from "./event.controller";
-import { AuthSingleton } from "../../types/AuthSingleton";
+import { AuthSingleton } from "../../types/singleton";
 
 const router = new Elysia({ prefix: "/event" });
 

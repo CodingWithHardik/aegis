@@ -1,7 +1,7 @@
 import { Context } from "elysia";
 import { catchAsync } from "../../utils/common/helpers/CacheAsync";
 import { GetTeamInputType } from "./team.schema";
-import { AuthSingleton } from "../../types/AuthSingleton";
+import { AuthSingleton } from "../../types/singleton";
 import { teamService } from "./team.container";
 import { sendResponse } from "../../utils/common/response/AppResponse";
 

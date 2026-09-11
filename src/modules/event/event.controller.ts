@@ -1,7 +1,7 @@
 import { Context } from "elysia"
 import { catchAsync } from "../../utils/common/helpers/CacheAsync"
 import { CreateEventInputType, DeleteEventInputType, GetEventInputType, UpdateEventInputType } from "./event.schema"
-import { AuthSingleton } from "../../types/AuthSingleton";
+import { AuthSingleton } from "../../types/singleton";
 import { eventService } from "./event.container";
 import { sendResponse } from "../../utils/common/response/AppResponse";
 

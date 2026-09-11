@@ -1,7 +1,7 @@
 import { Context, SingletonBase } from "elysia";
 import z, { ZodType } from "zod";
 import { validate } from "../../../middleware/validate.middleware";
-import { emptySingleton } from "../../../types/emptySingleton";
+import { emptySingleton } from "../../../types/singleton";
 
 export type ValidatedContext<
     S extends ZodType<any>,
