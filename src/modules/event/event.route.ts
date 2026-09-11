@@ -12,7 +12,7 @@ const eventController = new EventController();
 router.use(
     new Elysia()
         .use(authMiddleware)
-        .get("/",
+        .post("/",
             ...validated<typeof getEventSchema, AuthSingleton>(
                 getEventSchema,
                 eventController.getEvent
@@ -23,7 +23,7 @@ router.use(
 router.use(
     new Elysia()
         .use(authMiddleware)
-        .get("/all",
+        .post("/all",
             eventController.getAllEvents
         )
 )
