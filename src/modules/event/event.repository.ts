@@ -62,7 +62,7 @@ export class EventRepository implements IEventRepository {
         return cachedQuery(
             "teamByUserIdAndEventId",
             {
-                key: cacheKeys.teamByUserIdAndEventId(userId, eventId),
+                key: cacheKeys.teamByEventIdAndUserId(userId, eventId),
                 ttl: 600
             },
             () => 

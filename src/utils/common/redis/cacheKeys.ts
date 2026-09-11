@@ -5,5 +5,5 @@ export const cacheKeys = {
     event: (eventId: string) => `event:${eventId}`,
     eventByYearAndType: (year: number, type: "INTRA" | "MAIN") => `event:${year}:${type}`,
     getEventByUser: (userId: string) => `event:user:${userId}`,
-    teamByUserIdAndEventId: (userId: string, eventId: string) => `team:eventId:${eventId}:userId:${userId}`,
+    teamByEventIdAndUserId: (userId: string, eventId: string) => `team:eventId:${eventId}:userId:${userId}`,
 }
