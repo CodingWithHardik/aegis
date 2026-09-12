@@ -9,5 +9,5 @@ export const cacheKeys = {
     getEventByUser: (userId: string) => `event:user:${userId}`,
     teamByEventIdAndUserId: (userId: string, eventId: string) => `team:eventId:${eventId}:userId:${userId}`,
     team: (teamId: string) => `team:${teamId}`,
-    teamByMultiCriteria: (teamId?: string, eventId?: string, userId?: string, role?: Role) => `team:teamId:${teamId}:eventId:${eventId}:userId:${userId}:role:${role}`
+    teamByMultiCriteria: (teamId?: string, eventId?: string, userId?: string, role?: Role | "*") => `team:teamId:${teamId}:eventId:${eventId}:userId:${userId}:role:${role}`
 }

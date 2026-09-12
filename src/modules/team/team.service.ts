@@ -3,8 +3,8 @@ import { logger } from "../../config/logger";
 import { AppError } from "../../middleware/error.middleware";
 import { filterGetTeam, getRoleOfUser } from "./team.helper";
 import { ITeamRepository } from "./team.interface";
-import { toTeamGetResponse } from "./team.response";
-import { GetTeamInputType } from "./team.schema";
+import { toTeamGetResponse, toTeamResponse } from "./team.response";
+import { AddMemberInputType, GetTeamInputType } from "./team.schema";
 
 export class TeamService {
     constructor(private teamRepo: ITeamRepository) {}
@@ -36,5 +36,28 @@ export class TeamService {
         })
         
         return toTeamGetResponse(filteredResult)
+    }
+
+    async addMember(data: AddMemberInputType, user: User) {
+        if (!user.isSuperAdmin) {
+            const getUserRole = await this.teamRepo.getTeamByEventIdAndUserId(data.eventId, user.id);
+            if (!getUserRole) 
+                throw new AppError("Unauthorized", 403);
+            if (getUserRole.role !== "SUPER_ADMIN" && getUserRole.role !== "ADMIN") 
+                throw new AppError("Unauthorized", 403);
+        }
+
+        const result = await this.teamRepo.createTeam(
+            data,
+        );
+
+        logger.info({
+            event: "ADDED_MEMBER",
+            userId: user.id,
+            eventId: result.eventId,
+            teamId: result.id,
+        })
+
+        return toTeamResponse(result)
     }
 }

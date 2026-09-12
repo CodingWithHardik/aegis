@@ -1,9 +1,10 @@
 import { Role, Team } from "../../../.prisma/client";
 import { prisma } from "../../lib/prisma";
-import { cachedQuery } from "../../utils/common/helpers/CacheQuery";
+import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
+import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { ITeamRepository } from "./team.interface";
-import { GetTeamInputType } from "./team.schema";
+import { AddMemberInputType, GetTeamInputType } from "./team.schema";
 
 export class TeamRepository implements ITeamRepository {
     async getTeam(data: GetTeamInputType): Promise<Team[] | null> {
@@ -26,7 +27,7 @@ export class TeamRepository implements ITeamRepository {
         )
     }
 
-    async getTeamByEventIdAndUserId(eventId: string, userId: string): Promise<{ role: Role } | null> {
+    async getTeamByEventIdAndUserId(eventId: string, userId: string): Promise<Team | null> {
         return cachedQuery(
             "getTeamByEventIdAndUserId",
             {
@@ -40,16 +41,13 @@ export class TeamRepository implements ITeamRepository {
                             eventId,
                             userId,
                         }
-                    },
-                    select: {
-                        role: true,
                     }
                 })
             )
         )
     }
 
-    async getTeamByTeamIdAndUserId(teamId: string, userId: string): Promise<{ role: Role; } | null> {
+    async getTeamByTeamIdAndUserId(teamId: string, userId: string): Promise<Team | null> {
         return cachedQuery(
             "getTeamByTeamIdAndUserId",
             {
@@ -61,12 +59,37 @@ export class TeamRepository implements ITeamRepository {
                     where: {
                         id: teamId,
                         userId: userId,
-                    },
-                    select: {
-                        role: true,
                     }
                 })
             )
         )
+    }
+
+    async createTeam(data: AddMemberInputType): Promise<Team> {
+        await invalidate(cacheKeys.teamByEventIdAndUserId(data.userId, data.eventId));
+        const result = await measureQuery(
+            "createTeam",
+            () =>
+                prisma.team.create({
+                    data: {
+                        name: data.name,
+                        ...(data.about ? { about: data.about } : null),
+                        role: data.role,
+                        event: {
+                            connect: {
+                                id: data.eventId,
+                            }
+                        },
+                        user: {
+                            connect: {
+                                id: data.userId,
+                            }
+                        }
+                    }
+                })
+        )
+        await invalidate(cacheKeys.team(result.id));
+        await invalidate(cacheKeys.teamByMultiCriteria("*", data.eventId, data.userId, "*"))
+        return result;
     }
 }
