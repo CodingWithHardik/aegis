@@ -1,6 +1,6 @@
 import { Context } from "elysia";
 import { catchAsync } from "../../utils/common/helpers/CacheAsync";
-import { AddMemberInputType, GetTeamInputType, UpdateMemberInputType } from "./team.schema";
+import { AddMemberInputType, DeleteMemberInputType, GetTeamInputType, UpdateMemberInputType } from "./team.schema";
 import { AuthSingleton } from "../../types/singleton";
 import { teamService } from "./team.container";
 import { sendResponse } from "../../utils/common/response/AppResponse";
@@ -45,6 +45,21 @@ export class TeamController {
         return sendResponse(ctx.set, 200, {
             success: true,
             message: "Member Updated Successfully",
+            data: {
+                team: result,
+            }
+        })
+    })
+
+    deleteMember = catchAsync(async (ctx: Context<{ body: DeleteMemberInputType }, AuthSingleton>) => {
+        const result = await teamService.deleteMember(
+            ctx.body,
+            ctx.user,
+        )
+
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "Member Deleted Successfully",
             data: {
                 team: result,
             }

@@ -4,7 +4,7 @@ import { AppError } from "../../middleware/error.middleware";
 import { filterGetTeam, getRoleOfUser } from "./team.helper";
 import { ITeamRepository } from "./team.interface";
 import { toTeamGetResponse, toTeamResponse } from "./team.response";
-import { AddMemberInputType, GetTeamInputType, UpdateMemberInputType } from "./team.schema";
+import { AddMemberInputType, DeleteMemberInputType, GetTeamInputType, UpdateMemberInputType } from "./team.schema";
 
 export class TeamService {
     constructor(private teamRepo: ITeamRepository) {}
@@ -87,6 +87,38 @@ export class TeamService {
 
         logger.info({
             event: "UPDATED_MEMBER",
+            userId: user.id,
+            eventId: result.eventId,
+            teamId: result.id,
+        })
+
+        return toTeamResponse(result);
+    }
+
+    async deleteMember(data: DeleteMemberInputType, user: User) {
+        if (!user.isSuperAdmin) {
+            const getUserRole = await getRoleOfUser(
+                this.teamRepo.getTeamByEventIdAndUserId,
+                this.teamRepo.getTeamByTeamIdAndUserId,
+                {
+                    eventId: data.eventId,
+                    teamId: data.teamId,
+                    userId: data.userId,
+                },
+                user,
+            )
+            if (!getUserRole)
+                throw new AppError("Unauthorized", 403);
+            if (getUserRole.role !== "SUPER_ADMIN" && getUserRole.role !== "ADMIN")
+                throw new AppError("Unauthorized", 403);
+        }
+
+        const result = await this.teamRepo.deleteTeam(
+            data,
+        )
+
+        logger.info({
+            event: "DELETE_MEMBER",
             userId: user.id,
             eventId: result.eventId,
             teamId: result.id,

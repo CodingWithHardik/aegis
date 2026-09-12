@@ -1,7 +1,7 @@
 import Elysia from "elysia";
 import { TeamController } from "./team.controller";
 import { authMiddleware } from "../../middleware/authentication.middleware";
-import { addMemberSchema, getTeamSchema, updateMemberSchema } from "./team.schema";
+import { addMemberSchema, deleteMemberSchema, getTeamSchema, updateMemberSchema } from "./team.schema";
 import { AuthSingleton } from "../../types/singleton";
 import { validated } from "../../utils/common/validation/validated";
 
@@ -28,6 +28,12 @@ router.use(
             ...validated<typeof updateMemberSchema, AuthSingleton>(
                 updateMemberSchema,
                 teamController.updateMember,
+            )
+        )
+        .post("/delete",
+            ...validated<typeof deleteMemberSchema, AuthSingleton>(
+                deleteMemberSchema,
+                teamController.deleteMember,
             )
         )
 )

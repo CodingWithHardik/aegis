@@ -60,9 +60,22 @@ export const updateMemberSchema = z.object({
             stack: ["name", "about", "role"]
         })
     }
-})
+});
 
+export const deleteMemberSchema = z.object({
+    userId: z.string().trim().optional(),
+    eventId: z.string().trim().optional(),
+    teamId: z.string().trim().optional(),
+})
+.strict()
+.refine((data) => !!data.teamId || (!!data.userId && !!data.eventId),
+    {
+        message: "Either teamId or userId and eventId are required",
+        path: ["teamId", "userId", "eventId"]
+    }
+);
 
 export type GetTeamInputType = z.infer<typeof getTeamSchema>;
 export type AddMemberInputType = z.infer<typeof addMemberSchema>;
 export type UpdateMemberInputType = z.infer<typeof updateMemberSchema>;
+export type DeleteMemberInputType = z.infer<typeof deleteMemberSchema>;
