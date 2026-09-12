@@ -4,7 +4,7 @@ import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { ITeamRepository } from "./team.interface";
-import { AddMemberInputType, GetTeamInputType } from "./team.schema";
+import { AddMemberInputType, GetTeamInputType, UpdateMemberInputType } from "./team.schema";
 
 export class TeamRepository implements ITeamRepository {
     async getTeam(data: GetTeamInputType): Promise<Team[] | null> {
@@ -89,7 +89,42 @@ export class TeamRepository implements ITeamRepository {
                 })
         )
         await invalidate(cacheKeys.team(result.id));
-        await invalidate(cacheKeys.teamByMultiCriteria("*", data.eventId, "*", "*"))
+        await invalidate(cacheKeys.teamByMultiCriteria("*", result.eventId, "*", "*"));
+        await invalidate(cacheKeys.teamByMultiCriteria("*", "*", result.userId, "*"));
+        await invalidate(cacheKeys.teamByMultiCriteria(result.id, "*", "*", "*"));
+        await invalidate(cacheKeys.teamByMultiCriteria(undefined, undefined, undefined, undefined));
+        return result;
+    }
+
+    async updateTeam(data: UpdateMemberInputType): Promise<Team> {
+        const result = await measureQuery(
+            "updateTeam",
+            async () => 
+                prisma.team.update({
+                    where: {
+                        ...(data.eventId && data.userId) ?
+                        {
+                            eventId_userId: {
+                                eventId: data.eventId,
+                                userId: data.userId,
+                            }
+                        } : {
+                            id: data.teamId,
+                        }
+                    },
+                    data: {
+                        ...(data.name && { name: data.name }),
+                        ...(data.about && { about: data.about }),
+                        ...(data.role && { role: data.role }),
+                    }
+                })
+        )
+        await invalidate(cacheKeys.teamByEventIdAndUserId(result.userId, result.eventId));
+        await invalidate(cacheKeys.team(result.id));
+        await invalidate(cacheKeys.teamByMultiCriteria("*", result.eventId, "*", "*"));
+        await invalidate(cacheKeys.teamByMultiCriteria("*", "*", result.userId, "*"));
+        await invalidate(cacheKeys.teamByMultiCriteria(result.id, "*", "*", "*"));
+        await invalidate(cacheKeys.teamByMultiCriteria(undefined, undefined, undefined, undefined));
         return result;
     }
 }

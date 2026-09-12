@@ -1,9 +1,10 @@
 import { Team } from "../../../.prisma/client";
-import { AddMemberInputType, GetTeamInputType } from "./team.schema";
+import { AddMemberInputType, GetTeamInputType, UpdateMemberInputType } from "./team.schema";
 
 export interface ITeamRepository {
     getTeam(data: GetTeamInputType): Promise<Team[] | null>;
     getTeamByEventIdAndUserId(eventId: string, userId: string): Promise<Team | null>;
     getTeamByTeamIdAndUserId(teamId: string, userId: string): Promise<Team | null>;
     createTeam(data: AddMemberInputType): Promise<Team>;
+    updateTeam(data: UpdateMemberInputType): Promise<Team>;
 }
