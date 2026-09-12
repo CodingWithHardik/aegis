@@ -57,8 +57,29 @@ export const cachedQuery = async <T>(
 export const invalidate = async (...keys: string[]): Promise<void> => {
   if (keys.length === 0) return;
   try {
-    await redis.del(...keys);
-    logger.info({ event: "CACHE_INVALIDATE", keys });
+    const literalKeys: string[] = [];
+    const pattern: string[] = [];
+
+    for (const key of keys) {
+      if (key.includes("*")) {
+        pattern.push(key);
+      } else {
+        literalKeys.push(key);
+      }
+    }
+
+    const scannedKeys = await Promise.all(pattern.map(scanKeys))
+    const resolvedKeys = scannedKeys.flat();
+
+    const allKeys = [...literalKeys, ...resolvedKeys];
+
+    if (allKeys.length === 0) {
+      logger.info({ event: "CACHE_INVALIDATE_NO_KEYS", keys, resolved: [] });
+      return;
+    }
+
+    await redis.del(...allKeys);
+    logger.info({ event: "CACHE_INVALIDATE", keys, resolved: allKeys });
   } catch (error) {
     logger.warn({
       event: "CACHE_INVALIDATE_ERROR",
@@ -67,3 +88,21 @@ export const invalidate = async (...keys: string[]): Promise<void> => {
     });
   }
 };
+
+const scanKeys = async (pattern: string): Promise<string[]> => {
+  const found: string[] = [];
+  let cursor = "0";
+
+  do {
+    const [nextCursor, batch] = await redis.scan(
+      cursor,
+      "MATCH",
+      pattern,
+      "COUNT",
+      100,
+    );
+    cursor = nextCursor;
+    found.push(...batch);
+  } while (cursor !== "0");
+  return found;
+}

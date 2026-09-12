@@ -89,7 +89,7 @@ export class TeamRepository implements ITeamRepository {
                 })
         )
         await invalidate(cacheKeys.team(result.id));
-        await invalidate(cacheKeys.teamByMultiCriteria("*", data.eventId, data.userId, "*"))
+        await invalidate(cacheKeys.teamByMultiCriteria("*", data.eventId, "*", "*"))
         return result;
     }
 }
