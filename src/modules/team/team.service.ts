@@ -77,6 +77,8 @@ export class TeamService {
                 throw new AppError("Unauthorized", 403);
             if (getUserRole.role !== "SUPER_ADMIN" && getUserRole.role !== "ADMIN")
                 throw new AppError("Unauthorized", 403);
+            if (user.id === data.userId && data.role === "SUPER_ADMIN" && getUserRole.role !== "SUPER_ADMIN")
+                throw new AppError("Unauthorized", 403);
         }
 
         const result = await this.teamRepo.updateTeam(
