@@ -45,6 +45,8 @@ export class TeamService {
                 throw new AppError("Unauthorized", 403);
             if (getUserRole.role !== "SUPER_ADMIN" && getUserRole.role !== "ADMIN") 
                 throw new AppError("Unauthorized", 403);
+            if (getUserRole.role === "ADMIN" && data.role === "SUPER_ADMIN")
+                throw new AppError("Unauthorized", 403);
         }
 
         const result = await this.teamRepo.createTeam(
@@ -78,6 +80,19 @@ export class TeamService {
             if (getUserRole.role !== "SUPER_ADMIN" && getUserRole.role !== "ADMIN")
                 throw new AppError("Unauthorized", 403);
             if (user.id === data.userId && data.role === "SUPER_ADMIN" && getUserRole.role !== "SUPER_ADMIN")
+                throw new AppError("Unauthorized", 403);
+            const getTargetUserRole = await getRoleOfUser(
+                this.teamRepo.getTeamByEventIdAndUserId,
+                this.teamRepo.getTeamByTeamIdAndUserId,
+                {
+                    eventId: data.eventId,
+                    teamId: data.teamId,
+                    userId: data.userId,
+                },
+                user,
+                data.userId
+            )
+            if (getUserRole.role === "ADMIN" && getTargetUserRole?.role === "SUPER_ADMIN")
                 throw new AppError("Unauthorized", 403);
         }
 
