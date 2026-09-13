@@ -15,13 +15,14 @@ export const getRoleOfUser = async (
     getTeamByEventIdAndUserId:(eventId: string, userId: string) => Promise<Team | null>, 
     getTeamByTeamIdAndUserId: (teamId: string, userId: string) => Promise<Team | null>, 
     data: GetTeamInputType, 
-    user: User
+    user: User,
+    bypassUserId: string | null = null,
 ): Promise<{ role: Role } | null> => {
     if (data.eventId) {
-        const result = await getTeamByEventIdAndUserId(data.eventId, user.id);
+        const result = await getTeamByEventIdAndUserId(data.eventId, bypassUserId ?? user.id);
         return result?.role ? { role: result.role } : null;
     } else if (data.teamId) {
-        const result = await getTeamByTeamIdAndUserId(data.teamId, user.id);
+        const result = await getTeamByTeamIdAndUserId(data.teamId, bypassUserId ?? user.id);
         return result?.role ? { role: result.role } : null;
     } else
         return null;
