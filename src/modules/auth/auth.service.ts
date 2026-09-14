@@ -42,6 +42,7 @@ export class AuthService {
       email: data.email,
       passwordHash: hashedPassword,
       emailHash: hashedEmail,
+      instution: data.instution,
     });
 
     const familyId = generateFamilyId();

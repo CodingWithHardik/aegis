@@ -11,6 +11,14 @@ model Member {
     role MemberRole @default(MEMBER)
     portfolio String?
     applicationStatus ApplicationStatus @default(PENDING)
+    class String
+    section String
+    paymentType PaymentType
+    paymentLink String?
+    munExperience Int @default(0)
+    munAchievements String?
+    additionalInfo String?
+    notes String?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     @@unique([eventId, userId])
@@ -29,4 +37,9 @@ enum ApplicationStatus {
     ALLOTED
     APPROVED
     REJECTED
+}
+
+enum PaymentType {
+    CASH
+    UPI
 }

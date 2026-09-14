@@ -6,6 +6,7 @@ model User {
     googleId String? @unique
     passwordHash String?
     phoneNo String?
+    instution String?
     isSuperAdmin Boolean @default(false)
     banStatus BanStatus @default(UNBANNED)
     team Team[]

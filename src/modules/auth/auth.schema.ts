@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const registerUserSchema = z.object({
     name: z.string().trim().min(3, "Minimum 3 characters required").max(50, "Maximum 50 characters allowed"),
+    instution: z.string().trim().min(3, "Minimum 3 characters required").max(100, "Maximum 100 characters allowed"),
     email: z.email().trim().toLowerCase(),
     password: z.string().trim().min(6, "Minimum 6 characters required").max(50, "Maximum 50 characters allowed"),
 }).strict();
