@@ -54,7 +54,7 @@ enum Role {
 model Committee {
     id String @id @default(uuid())
     name String
-    slug String @unique
+    slug String
     agenda String
     about String?
     capacity Int @default(0)
