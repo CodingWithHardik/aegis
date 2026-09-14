@@ -15,7 +15,7 @@ export class TeamService {
             
             const getUserRole = await getRoleOfUser(
                 this.teamRepo.getTeamByEventIdAndUserId,
-                this.teamRepo.getTeamByTeamIdAndUserId,
+                this.teamRepo.getTeamByTeamId,
                 data,
                 user,
             )
@@ -64,14 +64,27 @@ export class TeamService {
     }
 
     async updateMember(data: UpdateMemberInputType, user: User) {
+        const targetTeam = data.teamId ?
+            await this.teamRepo.getTeamByTeamId(data.teamId) :
+            (data.eventId && data.userId) ?
+                await this.teamRepo.getTeamByEventIdAndUserId(data.eventId, data.userId) :
+                null;
+        if (!targetTeam) throw new AppError("Team not found", 404);
+        const resolveData: UpdateMemberInputType = {
+            teamId: targetTeam.id,
+            eventId: targetTeam.eventId,
+            userId: targetTeam.userId,
+            ...data,
+        }
         if (!user.isSuperAdmin) {
             const getUserRole = await getRoleOfUser(
                 this.teamRepo.getTeamByEventIdAndUserId,
-                this.teamRepo.getTeamByTeamIdAndUserId,
+                this.teamRepo.getTeamByTeamId,
                 {
                     eventId: data.eventId,
-                    teamId: data.teamId,
-                    userId: data.userId,
+                    teamId: undefined,
+                    userId: undefined,
+                    role: undefined,
                 },
                 user,
             )
@@ -81,23 +94,12 @@ export class TeamService {
                 throw new AppError("Unauthorized", 403);
             if (data.role === "SUPER_ADMIN" && getUserRole.role !== "SUPER_ADMIN")
                 throw new AppError("Unauthorized", 403);
-            const getTargetUserRole = await getRoleOfUser(
-                this.teamRepo.getTeamByEventIdAndUserId,
-                this.teamRepo.getTeamByTeamIdAndUserId,
-                {
-                    eventId: data.eventId,
-                    teamId: data.teamId,
-                    userId: data.userId,
-                },
-                user,
-                data.userId
-            )
-            if (getUserRole.role === "ADMIN" && getTargetUserRole?.role === "SUPER_ADMIN")
+            if (getUserRole.role === "ADMIN" && targetTeam.role === "SUPER_ADMIN")
                 throw new AppError("Unauthorized", 403);
         }
 
         const result = await this.teamRepo.updateTeam(
-            data,
+            resolveData,
         )
 
         logger.info({
@@ -114,7 +116,7 @@ export class TeamService {
         if (!user.isSuperAdmin) {
             const getUserRole = await getRoleOfUser(
                 this.teamRepo.getTeamByEventIdAndUserId,
-                this.teamRepo.getTeamByTeamIdAndUserId,
+                this.teamRepo.getTeamByTeamId,
                 {
                     eventId: data.eventId,
                     teamId: data.teamId,
@@ -128,7 +130,7 @@ export class TeamService {
                 throw new AppError("Unauthorized", 403);
             const getTargetUserRole = await getRoleOfUser(
                 this.teamRepo.getTeamByEventIdAndUserId,
-                this.teamRepo.getTeamByTeamIdAndUserId,
+                this.teamRepo.getTeamByTeamId,
                 {
                     eventId: data.eventId,
                     teamId: data.teamId,

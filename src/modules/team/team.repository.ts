@@ -47,9 +47,9 @@ export class TeamRepository implements ITeamRepository {
         )
     }
 
-    async getTeamByTeamIdAndUserId(teamId: string, userId: string): Promise<Team | null> {
+    async getTeamByTeamId(teamId: string): Promise<Team | null> {
         return cachedQuery(
-            "getTeamByTeamIdAndUserId",
+            "getTeamByTeamId",
             {
                 key: cacheKeys.team(teamId),
                 ttl: 600,
@@ -58,7 +58,6 @@ export class TeamRepository implements ITeamRepository {
                 prisma.team.findUnique({
                     where: {
                         id: teamId,
-                        userId: userId,
                     }
                 })
             )
@@ -102,14 +101,14 @@ export class TeamRepository implements ITeamRepository {
             async () => 
                 prisma.team.update({
                     where: {
-                        ...(data.eventId && data.userId) ?
+                        ...(data.teamId) ?
                         {
-                            eventId_userId: {
-                                eventId: data.eventId,
-                                userId: data.userId,
-                            }
-                        } : {
                             id: data.teamId,
+                        } : {
+                            eventId_userId: {
+                                eventId: data.eventId!,
+                                userId: data.userId!,
+                            }
                         }
                     },
                     data: {
@@ -134,14 +133,14 @@ export class TeamRepository implements ITeamRepository {
             async () => 
                 prisma.team.delete({
                     where: {
-                        ...(data.eventId && data.userId) ?
+                        ...(data.teamId) ?
                         {
-                            eventId_userId: {
-                                eventId: data.eventId,
-                                userId: data.userId,
-                            }
+                            id: data.teamId
                         } : {
-                            id: data.teamId,
+                            eventId_userId: {
+                                eventId: data.eventId!,
+                                userId: data.userId!,
+                            }
                         }
                     }
                 })
