@@ -11,5 +11,7 @@ export const cacheKeys = {
     team: (teamId: string) => `team:teamId:${teamId}`,
     teamByMultiCriteria: (teamId?: string, eventId?: string, userId?: string, role?: Role | "*") => `team:teamId:${teamId}:eventId:${eventId}:userId:${userId}:role:${role}`,
     committeeByEventIdAndCommitteeId: (committeeId?: string, eventId?: string) => `committee:eventId:${eventId}:committeeId:${committeeId}`,
-    committeeId: (committeeId: string) => `committee:committeeId:${committeeId}`
+    committeeId: (committeeId: string) => `committee:committeeId:${committeeId}`,
+    register: (registerId?: string, eventId?: string, userId?: string) => `register:id:${registerId}:eventId:${eventId}userId:${userId}`,
+    registerationId: (memberId: string) => `register:id:${memberId}`
 }
