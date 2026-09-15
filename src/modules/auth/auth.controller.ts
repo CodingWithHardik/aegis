@@ -1,6 +1,6 @@
 import { catchAsync } from "../../utils/common/helpers/CacheAsync"
 import type { Context } from "elysia";
-import { LoginUserInputType, RefreshTokenBodyType, RegisterUserInputType } from "./auth.schema";
+import { LoginUserInputType, RefreshTokenBodyType, RegisterUserInputType, UpdateUserInputType } from "./auth.schema";
 import { authService } from "./auth.container";
 import { setAuthCookies } from "./auth.helper";
 import { sendResponse } from "../../utils/common/response/AppResponse";
@@ -8,12 +8,13 @@ import { AuthContext } from "./auth.types";
 
 export class AuthController {
     registerUser = catchAsync(async (ctx: Context<{ body: RegisterUserInputType }>) => {
-        const { name, email, password } = ctx.body;
+        const { name, email, password, instution } = ctx.body;
 
         const result = await authService.registerUserService({
             name,
             email,
-            password
+            password,
+            instution,
         })
 
         setAuthCookies(ctx.cookie, result.refreshToken)
@@ -73,6 +74,19 @@ export class AuthController {
                 user: result.user,
                 accessToken: result.accessToken
             }
+        })
+    })
+
+    updateUser = catchAsync(async (ctx: Context<{ body: UpdateUserInputType }>) => {
+        const userId = ctx.body.userId;
+        const data = ctx.body;
+
+        const result = await authService.updateAuth(data, userId);
+
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "User updated successfully",
+            data: result,
         })
     })
 }

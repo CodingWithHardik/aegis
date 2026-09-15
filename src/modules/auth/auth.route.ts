@@ -1,6 +1,6 @@
 import Elysia from "elysia";
 import { AuthController } from "./auth.controller";
-import { loginUserSchema, refreshAccessTokenSchema, registerUserSchema } from "./auth.schema";
+import { loginUserSchema, refreshAccessTokenSchema, registerUserSchema, updateUserSchema } from "./auth.schema";
 import { authMiddleware } from "../../middleware/authentication.middleware";
 import { validated } from "../../utils/common/validation/validated";
 import { loginRateLimit } from "../../middleware/rate-limit/login-rate-limit.middleware"
@@ -44,6 +44,16 @@ router.use(
             ...validated(
                 refreshAccessTokenSchema, 
                 authController.refreshAccessToken
+            )
+        )
+)
+
+router.use(
+    new Elysia()
+        .post("/update", 
+            ...validated(
+                updateUserSchema,
+                authController.updateUser
             )
         )
 )

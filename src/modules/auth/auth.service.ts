@@ -21,7 +21,7 @@ import {
 } from "./auth.helper";
 import { IAuthRepository } from "./auth.interface";
 import { toUserResponse } from "./auth.response";
-import { LoginUserInputType, RegisterUserInputType } from "./auth.schema";
+import { LoginUserInputType, RegisterUserInputType, UpdateUserInputType } from "./auth.schema";
 import { VerifyJwt } from "./auth.types";
 
 export class AuthService {
@@ -239,5 +239,17 @@ export class AuthService {
       accessToken,
       refreshToken: refreshTokenNew,
     };
+  }
+
+  async updateAuth(data: UpdateUserInputType, userId: string) {
+    const user = await this.authRepo.findUserById(userId);
+
+    if (!user) {
+      throw new AppError("User Not Found", 404);
+    }
+
+    const result = await this.authRepo.updateUser(data, userId)
+
+    return toUserResponse(result);
   }
 }
