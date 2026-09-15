@@ -42,7 +42,7 @@ export class AuthService {
       email: data.email,
       passwordHash: hashedPassword,
       emailHash: hashedEmail,
-      instution: data.instution,
+      instution: data.instution ? data.instution : null,
     });
 
     const familyId = generateFamilyId();

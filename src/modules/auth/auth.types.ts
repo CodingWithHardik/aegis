@@ -18,7 +18,7 @@ export type UserResponseType = {
 
 export type RegisterUserType = {
     name: string;
-    instution: string;
+    instution: string | null;
     email: string;
     emailHash: string;
     passwordHash: string;
