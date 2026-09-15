@@ -15,8 +15,10 @@ router.use(
         .post("/",
             ...validated<typeof getRegisterSchema, AuthSingleton>(
                 getRegisterSchema,
-                registerController.getRegisteration
+                registerController.getRegisteration,
+                { tags: ["Register"], summary: "Get a specific registeration" }
             )
         )
 )
 
+export default router;

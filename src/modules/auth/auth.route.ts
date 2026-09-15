@@ -13,7 +13,8 @@ router
     .post("/register", 
         ...validated(
             registerUserSchema, 
-            authController.registerUser
+            authController.registerUser,
+            { tags: ["Auth"], summary: "Register a new user" }
         )
     );
 
@@ -24,7 +25,8 @@ router
             .post("/login", 
                 ...validated(
                     loginUserSchema, 
-                    authController.loginUser
+                    authController.loginUser,
+                    { tags: ["Auth"], summary: "Log in, receive access/refresh tokens" }
                 )
             )
     )
@@ -34,7 +36,8 @@ router
         new Elysia()
             .use(authMiddleware)
             .get("/me",
-                authController.getLoggedInUser
+                authController.getLoggedInUser,
+                { detail: { tags: ["Auth"], summary: "Get logged in user details" }}
             )
     )
 
@@ -43,7 +46,8 @@ router.use(
         .post("/refresh", 
             ...validated(
                 refreshAccessTokenSchema, 
-                authController.refreshAccessToken
+                authController.refreshAccessToken,
+                { tags: ["Auth"], summary: "Refresh access token using refresh token" }
             )
         )
 )
@@ -53,7 +57,8 @@ router.use(
         .post("/update", 
             ...validated(
                 updateUserSchema,
-                authController.updateUser
+                authController.updateUser,
+                { tags: ["Auth"], summary: "Update user details" }
             )
         )
 )

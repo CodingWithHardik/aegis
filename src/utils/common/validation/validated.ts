@@ -13,9 +13,10 @@ export const validated = <
     Singleton extends SingletonBase = typeof emptySingleton
 >(
     schema: S,
-    handler: (ctx: ValidatedContext<S, Singleton>) => unknown
+    handler: (ctx: ValidatedContext<S, Singleton>) => unknown,
+    detail?: Record<string, unknown>
 ) => 
     [
         (ctx: Context) => handler(ctx as ValidatedContext<S, Singleton>),
-        { beforeHandle: validate(schema) },
+        { body: schema, beforeHandle: validate(schema), detail: detail ?? {} },
     ] as const

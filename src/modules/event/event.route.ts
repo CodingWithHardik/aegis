@@ -15,7 +15,8 @@ router.use(
         .post("/",
             ...validated<typeof getEventSchema, AuthSingleton>(
                 getEventSchema,
-                eventController.getEvent
+                eventController.getEvent,
+                { tags: ["Event"], summary: "Get a specific event" }
             )
         )
 )
@@ -24,7 +25,8 @@ router.use(
     new Elysia()
         .use(authMiddleware)
         .post("/all",
-            eventController.getAllEvents
+            eventController.getAllEvents,
+            { detail: { tags: ["Event"], summary: "Get all events" }}
         )
 )
 
@@ -34,7 +36,8 @@ router.use(
         .post("/create",
             ...validated<typeof createEventSchema, AuthSingleton>(
                 createEventSchema,
-                eventController.createEvent
+                eventController.createEvent,
+                { tags: ["Event"], summary: "Create a new event" }
             )
         )
 )
@@ -45,7 +48,8 @@ router.use(
         .post("/update", 
             ...validated<typeof updateEventSchema, AuthSingleton>(
                 updateEventSchema,
-                eventController.updateEvent
+                eventController.updateEvent,
+                { tags: ["Event"], summary: "Update a specific event" }
             )
         )
 )
@@ -56,7 +60,8 @@ router.use(
         .post("/delete", 
             ...validated<typeof deleteEventSchema, AuthSingleton>(
                 deleteEventSchema,
-                eventController.deleteEvent
+                eventController.deleteEvent,
+                { tags: ["Event"], summary: "Delete a specific event" }
             )
         )
 )

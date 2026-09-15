@@ -8,7 +8,19 @@ import { globalErrorHandler } from "./middleware/error.middleware";
 
 export const app = new Elysia();
 
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
+      styleSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
+      connectSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      workerSrc: ["'self'", "blob:"],
+      upgradeInsecureRequests: env.NODE_ENV === "production" ? [] : null,
+    }
+  },
+  hsts: env.NODE_ENV === "production", 
+}));
 app.use(backendInstance);
 app.use(requestLogger);
 app.use(
@@ -18,6 +30,30 @@ app.use(
   }),
 );
 app.use(globalErrorHandler);
+app.use(
+  openapi({
+    path: "/docs",
+    specPath: "/docs/json",
+    documentation: {
+      info: {
+        title: "AEGIS DPSKMUN API",
+        version: '1.0.0',
+        description: "API docs for dpskmun backend"
+      },
+      tags: [
+        { name: "Auth", description: "Authentication Endpoints" },
+        { name: "Committee", description: "Committees Endpoint" },
+        { name: "Event", description: "Event Endpoints" },
+        { name: "Register", description: "Register Endpoints" },
+        { name: "Team", description: "Team Endpoints" },
+        { name: "Health", description: "Health Checks" },
+      ]
+    },
+    mapJsonSchema: {
+      zod: z.toJSONSchema,
+    }
+  })
+)
 
 const healthController = new HealthController();
 
@@ -30,5 +66,7 @@ app.use(globalRateLimiter)
 import { backendInstance } from "./middleware/backend-instance.middleware";
 import { HealthController } from "./modules/health-check/health.controller";
 import { versionManager } from "./plugins/version/version.manager";
+import z from "zod";
+import { openapi } from "@elysiajs/openapi";
 
 app.use(versionManager);

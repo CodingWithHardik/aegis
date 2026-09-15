@@ -16,24 +16,28 @@ router.use(
             ...validated<typeof getCommitteeSchema, AuthSingleton>(
                 getCommitteeSchema,
                 committeeController.getCommittee,
+                { tags: ["Committee"], summary: "Get a specific committee" }
             )
         )
         .post("/create", 
             ...validated<typeof createCommitteeSchema, AuthSingleton>(
                 createCommitteeSchema,
                 committeeController.createCommittee,
+                { tags: ["Committee"], summary: "Create a new committee" }
             )
         )
         .post("/update", 
             ...validated<typeof updateCommitteeSchema, AuthSingleton>(
                 updateCommitteeSchema,
                 committeeController.updateCommittee,
+                { tags: ["Committee"], summary: "Update a specific committee" }
             )
         )
         .post("/delete", 
             ...validated<typeof deleteCommitteeSchema, AuthSingleton>(
                 deleteCommitteeSchema,
                 committeeController.deleteCommittee,
+                { tags: ["Committee"], summary: "Delete a specific committee" }
             )
         )
 )
