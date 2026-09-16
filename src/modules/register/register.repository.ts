@@ -1,9 +1,10 @@
-import { Member, Role } from "../../../.prisma/client";
+import { Member, Role, User } from "../../../.prisma/client";
 import { prisma } from "../../lib/prisma";
-import { cachedQuery } from "../../utils/common/helpers/CacheQuery";
+import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
+import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { IRegisterRepository } from "./register.interface";
-import { GetRegisterInputType } from "./register.schema";
+import { CreateMemberInputType, GetRegisterInputType } from "./register.schema";
 
 export class RegisterRepository implements IRegisterRepository {
     async getRegisteration(data: GetRegisterInputType): Promise<Member[]> {
@@ -64,5 +65,22 @@ export class RegisterRepository implements IRegisterRepository {
                     }
                 })
         )
+    }
+
+    async registerMember(data: CreateMemberInputType, user: User): Promise<Member> {
+        const result = await measureQuery(
+            "registerMember",
+            () =>
+                prisma.member.create({
+                    data: {
+                        ...data,
+                        userId: user.id,
+                    },
+                })
+        )
+        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.register(result.id, "*", "*"))
+        invalidate(cacheKeys.register("*", result.eventId, result.userId))
+        return result;
     }
 }

@@ -39,4 +39,21 @@ export const getRegisterSchema = z.object({
     }
 })
 
+export const createMemberSchema = z.object({
+    name: z.string().trim().min(3, "Name must be at least 3 characters long").max(50, "Name must be at most 50 characters long"),
+    about: z.string().trim().min(10, "About must be at least 10 characters long").max(500, "About must be at most 500 characters long").optional(),
+    eventId: z.string().trim(),
+    class: z.string().trim(),
+    section: z.string().trim().optional(),
+    paymentType: z.enum([
+        "CASH",
+        "UPI"
+    ]),
+    paymentLink: z.string().trim().optional(),
+    munExperience: z.number().int().optional(),
+    munAchievements: z.string().trim().optional(),
+    additionalInfo: z.string().trim().optional(),
+}).strict();
+
 export type GetRegisterInputType = z.infer<typeof getRegisterSchema>;
+export type CreateMemberInputType = z.infer<typeof createMemberSchema>;

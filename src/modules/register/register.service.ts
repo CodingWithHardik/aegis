@@ -1,7 +1,8 @@
 import { User } from "../../../.prisma/client";
 import { AppError } from "../../middleware/error.middleware";
 import { IRegisterRepository } from "./register.interface";
-import { GetRegisterInputType } from "./register.schema";
+import { toRegisterGetResponse, toRegisterResponse } from "./register.response";
+import { CreateMemberInputType, GetRegisterInputType } from "./register.schema";
 
 export class RegisterService {
     constructor(private registerRepo: IRegisterRepository) {};
@@ -24,6 +25,12 @@ export class RegisterService {
 
         const result = await this.registerRepo.getRegisteration(data) ?? [];
 
-        return result;
+        return toRegisterGetResponse(result);
+    }
+
+    async registerMember(data: CreateMemberInputType, user: User) {
+        const result = await this.registerRepo.registerMember(data, user);
+
+        return toRegisterResponse(result);
     }
 }

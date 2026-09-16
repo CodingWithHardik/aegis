@@ -12,7 +12,7 @@ model Member {
     portfolio String?
     applicationStatus ApplicationStatus @default(PENDING)
     class String
-    section String
+    section String?
     paymentType PaymentType
     paymentLink String?
     munExperience Int @default(0)
