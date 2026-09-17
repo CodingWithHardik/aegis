@@ -55,5 +55,21 @@ export const createMemberSchema = z.object({
     additionalInfo: z.string().trim().optional(),
 }).strict();
 
+export const deleteMemberSchema = z.object({
+    memberId: z.string().trim().optional(),
+    eventId: z.string().trim().optional(),
+    userId: z.string().trim().optional(),
+}).strict()
+.refine(
+    (data) =>
+        !!data.memberId ||
+    (!!data.eventId && !!data.userId),
+    {
+        error: "Either memberId or eventId and userId are required",
+        path: ["memberId", "eventId", "userId"]
+    }
+)
+
 export type GetRegisterInputType = z.infer<typeof getRegisterSchema>;
 export type CreateMemberInputType = z.infer<typeof createMemberSchema>;
+export type DeleteMemberInputType = z.infer<typeof deleteMemberSchema>;

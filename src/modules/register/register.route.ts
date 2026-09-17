@@ -2,7 +2,7 @@ import Elysia from "elysia";
 import { RegisterController } from "./register.controller";
 import { authMiddleware } from "../../middleware/authentication.middleware";
 import { AuthSingleton } from "../../types/singleton";
-import { createMemberSchema, getRegisterSchema } from "./register.schema";
+import { createMemberSchema, deleteMemberSchema, getRegisterSchema } from "./register.schema";
 import { validated } from "../../utils/common/validation/validated";
 
 const router = new Elysia({ prefix: "/register" });
@@ -29,6 +29,18 @@ router.use(
                 createMemberSchema,
                 registerController.registerMember,
                 { tags: ["Register"], summary: "Do registeration of a user"}
+            )
+        )
+)
+
+router.use(
+    new Elysia()
+        .use(authMiddleware)
+        .post("/delete",
+            ...validated<typeof deleteMemberSchema, AuthSingleton>(
+                deleteMemberSchema,
+                registerController.deleteMember,
+                { tags: ["Register"], summary: "Remove a member"}
             )
         )
 )

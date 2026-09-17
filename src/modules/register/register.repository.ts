@@ -4,7 +4,7 @@ import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { IRegisterRepository } from "./register.interface";
-import { CreateMemberInputType, GetRegisterInputType } from "./register.schema";
+import { CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType } from "./register.schema";
 
 export class RegisterRepository implements IRegisterRepository {
     async getRegisteration(data: GetRegisterInputType): Promise<Member[]> {
@@ -76,6 +76,29 @@ export class RegisterRepository implements IRegisterRepository {
                         ...data,
                         userId: user.id,
                     },
+                })
+        )
+        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.register(result.id, "*", "*"))
+        invalidate(cacheKeys.register("*", result.eventId, result.userId))
+        return result;
+    }
+
+    async deleteMember(data: DeleteMemberInputType): Promise<Member> {
+        const result = await measureQuery(
+            "deleteMember",
+            () =>
+                prisma.member.delete({
+                    where: data.memberId ?
+                        {
+                            id: data.memberId
+                        } : 
+                        {
+                            eventId_userId: {
+                                eventId: data.eventId!,
+                                userId: data.userId!
+                            }
+                        }
                 })
         )
         invalidate(cacheKeys.registerationId(result.id))
