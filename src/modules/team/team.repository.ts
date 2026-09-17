@@ -1,4 +1,4 @@
-import { Role, Team } from "../../../.prisma/client";
+import { Team } from "../../../.prisma/client";
 import { prisma } from "../../lib/prisma";
 import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
