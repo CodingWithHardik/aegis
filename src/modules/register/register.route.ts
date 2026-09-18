@@ -60,11 +60,23 @@ router.use(
 router.use(
     new Elysia()
         .use(authMiddleware)
-        .post("/role-change",
+        .post("/change-role",
             ...validated<typeof roleChangeSchema, AuthSingleton>(
                 roleChangeSchema,
                 registerController.roleChange,
                 { tags: ["Register"], summary: "Change role of a member"}
+            )
+        )
+)
+
+router.use(
+    new Elysia()
+        .use(authMiddleware)
+        .post("/change-status",
+            ...validated<typeof roleChangeSchema, AuthSingleton>(
+                roleChangeSchema,
+                registerController.roleChange,
+                { tags: ["Register"], summary: "Change Application Status of a member"}
             )
         )
 )
