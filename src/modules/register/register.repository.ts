@@ -4,7 +4,7 @@ import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { IRegisterRepository } from "./register.interface";
-import { AcceptPaymentInputType, CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
+import { AcceptPaymentInputType, AllotCommitteeInputType, CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
 
 export class RegisterRepository implements IRegisterRepository {
     async getRegisteration(data: GetRegisterInputType): Promise<Member[]> {
@@ -235,6 +235,37 @@ export class RegisterRepository implements IRegisterRepository {
                         },
                     data: {
                         applicationStatus: "PROCESSED"
+                    }
+                })
+        )
+        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.register(result.id, "*", "*"))
+        invalidate(cacheKeys.register("*", result.eventId, result.userId))
+        return result;
+    }
+
+    async allotCommittee(data: AllotCommitteeInputType): Promise<Member> {
+        const result = await measureQuery(
+            "allotCommittee",
+            () => 
+                prisma.member.update({
+                    where: data.memberId ?
+                        {
+                            id: data.memberId
+                        } :
+                        {
+                            eventId_userId: {
+                                eventId: data.eventId!,
+                                userId: data.userId!
+                            }
+                        },
+                    data: {
+                        committee: {
+                            connect: {
+                                id: data.committeeId,
+                            }
+                        },
+                        portfolio: data.portfolio,
                     }
                 })
         )

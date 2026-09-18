@@ -2,7 +2,7 @@ import Elysia from "elysia";
 import { RegisterController } from "./register.controller";
 import { authMiddleware } from "../../middleware/authentication.middleware";
 import { AuthSingleton } from "../../types/singleton";
-import { acceptPaymentSchema, createMemberSchema, deleteMemberSchema, getRegisterSchema, paymentChangeSchema, roleChangeSchema, updateMemberSchema } from "./register.schema";
+import { acceptPaymentSchema, allotCommitteeSchema, createMemberSchema, deleteMemberSchema, getRegisterSchema, paymentChangeSchema, roleChangeSchema, updateMemberSchema } from "./register.schema";
 import { validated } from "../../utils/common/validation/validated";
 
 const router = new Elysia({ prefix: "/register" });
@@ -101,6 +101,18 @@ router.use(
                 acceptPaymentSchema,
                 registerController.acceptPayment,
                 { tags: ["Register"], summary: "Accept Payment of the user"}
+            )
+        )
+)
+
+router.use(
+    new Elysia()
+        .use(authMiddleware)
+        .post("/allot-portfolio",
+            ...validated<typeof allotCommitteeSchema, AuthSingleton>(
+                allotCommitteeSchema,
+                registerController.allotCommittee,
+                { tags: ["Register"], summary: "Allot Committee & Portfolio to the user"}
             )
         )
 )

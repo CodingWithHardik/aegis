@@ -1,6 +1,6 @@
 import { Context } from "elysia";
 import { catchAsync } from "../../utils/common/helpers/CacheAsync";
-import { AcceptPaymentInputType, CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
+import { AcceptPaymentInputType, AllotCommitteeInputType, CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
 import { AuthSingleton } from "../../types/singleton";
 import { registerService } from "./register.container";
 import { sendResponse } from "../../utils/common/response/AppResponse";
@@ -95,7 +95,19 @@ export class RegisterController {
 
         return sendResponse(ctx.set, 200, {
             success: true,
-            message: "Accepted Payment of the User",
+            message: "Successfully Accepted Payment of the User",
+            data: {
+                registeration: result
+            }
+        })
+    })
+
+    allotCommittee = catchAsync(async (ctx: Context<{ body: AllotCommitteeInputType }, AuthSingleton>) => {
+        const result = await registerService.allotCommittee(ctx.body, ctx.user);
+
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "Successfully Alloted Committee to the User",
             data: {
                 registeration: result
             }

@@ -1,5 +1,5 @@
 import { Member, Role, User } from "../../../.prisma/client";
-import { AcceptPaymentInputType, CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
+import { AcceptPaymentInputType, CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType, AllotCommitteeInputType } from "./register.schema";
 
 export interface IRegisterRepository {
     getRegisteration(data: GetRegisterInputType): Promise<Member[]>;
@@ -12,4 +12,5 @@ export interface IRegisterRepository {
     statusChange(data: StatusChangeInputType): Promise<Member>;
     paymentModeChange(data: PaymentChangeInputType): Promise<Member>;
     acceptPayment(data: AcceptPaymentInputType): Promise<Member>;
+    allotCommittee(data: AllotCommitteeInputType): Promise<Member>;
 }

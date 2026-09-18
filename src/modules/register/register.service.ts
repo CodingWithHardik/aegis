@@ -2,7 +2,7 @@ import { User } from "../../../.prisma/client";
 import { AppError } from "../../middleware/error.middleware";
 import { IRegisterRepository } from "./register.interface";
 import { toRegisterGetResponse, toRegisterResponse } from "./register.response";
-import { AcceptPaymentInputType, CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
+import { AcceptPaymentInputType, AllotCommitteeInputType, CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
 
 export class RegisterService {
     constructor(private registerRepo: IRegisterRepository) {};
@@ -169,4 +169,29 @@ export class RegisterService {
         
         return toRegisterResponse(result);
     }
+
+    async allotCommittee(data: AllotCommitteeInputType, user: User) {
+        if (!user.isSuperAdmin) {
+            const eventIdByRegisteration = data.memberId ?
+                await this.registerRepo.getRegisterationById({ id: data.memberId }) : null;
+            if (!eventIdByRegisteration && data.memberId) 
+                throw new AppError("Unauthorized", 403)
+            const eventId = eventIdByRegisteration ? eventIdByRegisteration.eventId : data.eventId;
+            if (!eventId)
+                throw new AppError("EventId is required", 400);
+            const getRole = await this.registerRepo.getRoleByEventIdAdnUserId({ eventId: eventId, userId: user.id })
+            if (!getRole)
+                throw new AppError("Unauthorized", 403);
+            if (
+                getRole.role !== "SUPER_ADMIN" &&
+                getRole.role !== "ADMIN" &&
+                getRole.role !== "DELEGATE_AFFAIRS"
+            )
+                throw new AppError("Unauthorized", 403)
+        }
+
+        const result = await this.registerRepo.allotCommittee(data);
+        
+        return toRegisterResponse(result);
+    } 
 }
