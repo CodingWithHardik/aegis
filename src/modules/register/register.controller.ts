@@ -1,6 +1,6 @@
 import { Context } from "elysia";
 import { catchAsync } from "../../utils/common/helpers/CacheAsync";
-import { CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
+import { CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
 import { AuthSingleton } from "../../types/singleton";
 import { registerService } from "./register.container";
 import { sendResponse } from "../../utils/common/response/AppResponse";
@@ -72,6 +72,18 @@ export class RegisterController {
         return sendResponse(ctx.set, 200, {
             success: true,
             message: "Role Changed Successfully",
+            data: {
+                registeration: result
+            }
+        })
+    })
+
+    paymentModeChange = catchAsync(async (ctx: Context<{ body: PaymentChangeInputType }, AuthSingleton>) => {
+        const result = await registerService.paymentStatusChange(ctx.body, ctx.user);
+
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "Payment Mode Changed Successfully",
             data: {
                 registeration: result
             }

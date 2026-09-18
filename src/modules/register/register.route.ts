@@ -2,7 +2,7 @@ import Elysia from "elysia";
 import { RegisterController } from "./register.controller";
 import { authMiddleware } from "../../middleware/authentication.middleware";
 import { AuthSingleton } from "../../types/singleton";
-import { createMemberSchema, deleteMemberSchema, getRegisterSchema, roleChangeSchema, updateMemberSchema } from "./register.schema";
+import { createMemberSchema, deleteMemberSchema, getRegisterSchema, paymentChangeSchema, roleChangeSchema, updateMemberSchema } from "./register.schema";
 import { validated } from "../../utils/common/validation/validated";
 
 const router = new Elysia({ prefix: "/register" });
@@ -76,6 +76,18 @@ router.use(
             ...validated<typeof roleChangeSchema, AuthSingleton>(
                 roleChangeSchema,
                 registerController.roleChange,
+                { tags: ["Register"], summary: "Change Application Status of a member"}
+            )
+        )
+)
+
+router.use(
+    new Elysia()
+        .use(authMiddleware)
+        .post("/change-payment-mode",
+            ...validated<typeof paymentChangeSchema, AuthSingleton>(
+                paymentChangeSchema,
+                registerController.paymentModeChange,
                 { tags: ["Register"], summary: "Change Application Status of a member"}
             )
         )

@@ -4,7 +4,7 @@ import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { IRegisterRepository } from "./register.interface";
-import { CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
+import { CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
 
 export class RegisterRepository implements IRegisterRepository {
     async getRegisteration(data: GetRegisterInputType): Promise<Member[]> {
@@ -182,6 +182,33 @@ export class RegisterRepository implements IRegisterRepository {
                         },
                     data: {
                         applicationStatus: data.applicationStatus
+                    }
+                })
+        )
+        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.register(result.id, "*", "*"))
+        invalidate(cacheKeys.register("*", result.eventId, result.userId))
+        return result;
+    }
+
+    async paymentModeChange(data: PaymentChangeInputType): Promise<Member> {
+        const result = await measureQuery(
+            "paymentModeChange",
+            () =>
+                prisma.member.update({
+                    where: data.memberId ?
+                        {
+                            id: data.memberId
+                        } :
+                        {
+                            eventId_userId: {
+                                eventId: data.eventId!,
+                                userId: data.userId!
+                            }
+                        },
+                    data: {
+                        paymentType: data.paymentType,
+                        ...(data.paymentLink !== undefined && { paymentLink: data.paymentLink })
                     }
                 })
         )

@@ -169,9 +169,55 @@ export const statusChangeSchema = z.object({
     }
 })
 
+export const paymentChangeSchema = z.object({
+    memberId: z.string().trim().optional(),
+    eventId: z.string().trim().optional(),
+    userId: z.string().trim().optional(),
+    paymentType: z.enum([
+        "CASH",
+        "UPI"
+    ]),
+    paymentLink: z.string().trim().optional()
+}).strict()
+.superRefine((data, ctx) => {
+    const hasMemberId = !!data.memberId;
+    const hasEventAndUserId = !!data.eventId && !!data.userId;
+    if (!hasMemberId && !hasEventAndUserId) {
+        ctx.addIssue({
+            code: "custom",
+            message: "Provide either memberId or both eventId and userId",
+            path: ["memberId", "eventId", "userId"]
+        })
+    }
+    if (data.paymentType === undefined) {
+        ctx.addIssue({
+            code: "custom",
+            message: "Payment type is required",
+            path: ["paymentType"]
+        })
+    }
+
+    if (data.paymentType === "UPI" && !data.paymentLink) {
+        ctx.addIssue({
+            code: "custom",
+            message: "Payment link is required when payment type is UPI",
+            path: ["paymentLink"]
+        })
+    }
+
+    if (data.paymentType === "CASH" && data.paymentLink) {
+        ctx.addIssue({
+            code: "custom",
+            message: "Payment link should not be provided when payment type is CASH",
+            path: ["paymentLink"]
+        })
+    }
+})
+
 export type GetRegisterInputType = z.infer<typeof getRegisterSchema>;
 export type CreateMemberInputType = z.infer<typeof createMemberSchema>;
 export type UpdateMemberInputType = z.infer<typeof updateMemberSchema>;
 export type DeleteMemberInputType = z.infer<typeof deleteMemberSchema>;
 export type RoleChangeInputType = z.infer<typeof roleChangeSchema>;
 export type StatusChangeInputType = z.infer<typeof statusChangeSchema>;
+export type PaymentChangeInputType = z.infer<typeof paymentChangeSchema>;
