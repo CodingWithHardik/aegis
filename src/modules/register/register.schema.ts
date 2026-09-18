@@ -55,6 +55,46 @@ export const createMemberSchema = z.object({
     additionalInfo: z.string().trim().optional(),
 }).strict();
 
+export const updateMemberSchema = z.object({
+    memberId: z.string().trim().optional(),
+    eventId: z.string().trim().optional(),
+    userId: z.string().trim().optional(),
+    name: z.string().trim().min(3, "Name must be at least 3 characters long").max(50, "Name must be at most 50 characters long").optional(),
+    about: z.string().trim().min(10, "About must be at least 10 characters long").max(500, "About must be at most 500 characters long").optional(),
+    class: z.string().trim().optional(),
+    section: z.string().trim().optional(),
+    munExperience: z.number().int().optional(),
+    munAchievements: z.string().trim().optional(),
+    additionalInfo: z.string().trim().optional(),
+}).strict()
+.superRefine((data, ctx) => {
+    const hasMemberId = !!data.memberId;
+    const hasEventAndUserId = !!data.eventId && !!data.userId;
+    if (!hasMemberId && hasEventAndUserId) {
+        ctx.addIssue({
+            code: "custom",
+            message: "Provide either memberId or both eventId and userId",
+            path: ["memberId", "eventId", "userId"]
+        })
+    }
+    if (
+        data.name !== undefined ||
+        data.about !== undefined ||
+        data.class !== undefined ||
+        data.section !== undefined ||
+        data.munExperience !== undefined ||
+        data.munAchievements !== undefined ||
+        data.additionalInfo !== undefined
+    ) {
+        ctx.addIssue({
+            code: "custom",
+            message: "At least one field to update must be provided",
+            path: ["name", "about", "class", "section", "munExperience", "munAchievements", "additionalInfo"]
+        })
+    }
+})
+
+
 export const deleteMemberSchema = z.object({
     memberId: z.string().trim().optional(),
     eventId: z.string().trim().optional(),
@@ -72,4 +112,5 @@ export const deleteMemberSchema = z.object({
 
 export type GetRegisterInputType = z.infer<typeof getRegisterSchema>;
 export type CreateMemberInputType = z.infer<typeof createMemberSchema>;
+export type UpdateMemberInputType = z.infer<typeof updateMemberSchema>;
 export type DeleteMemberInputType = z.infer<typeof deleteMemberSchema>;
