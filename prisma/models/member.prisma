@@ -36,6 +36,8 @@ enum ApplicationStatus {
     PROCESSED
     ALLOTED
     APPROVED
+    REJECTED_PORTFOLIO
+    REJECTED_PAYMENT
     REJECTED
 }
 

@@ -14,6 +14,8 @@ export const getRegisterSchema = z.object({
         "PROCESSED",
         "ALLOTED",
         "APPROVED",
+        "REJECTED_PORTFOLIO",
+        "REJECTED_PAYMENT",
         "REJECTED"
     ]).optional(),
     paymentType: z.enum([
@@ -147,6 +149,8 @@ export const statusChangeSchema = z.object({
         "PROCESSED",
         "ALLOTED",
         "APPROVED",
+        "REJECTED_PORTFOLIO",
+        "REJECTED_PAYMENT",
         "REJECTED"
     ])
 }).strict()

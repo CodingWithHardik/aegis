@@ -4,7 +4,7 @@ export type RegisterResponseType = {
     about: string | null;
     role: "BOARD_MEMBER" | "MEMBER";
     portfolio: string | null;
-    applicationStatus: "PENDING" | "PROCESSED" | "ALLOTED" | "APPROVED" | "REJECTED";
+    applicationStatus: "PENDING" | "PROCESSED" | "ALLOTED" | "APPROVED" | "REJECTED" | "REJECTED_PORTFOLIO" | "REJECTED_PAYMENT";
     class: string;
     section: string | null;
     paymentType: "CASH" | "UPI";
