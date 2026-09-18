@@ -2,7 +2,7 @@ import { env } from "../../config/env.config";
 import { logger } from "../../config/logger";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/common/Errors/AppError";
-import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
+import { cachedQuery } from "../../utils/common/helpers/CacheQuery";
 import { ttlUntil } from "../../utils/common/helpers/helper.cache";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";

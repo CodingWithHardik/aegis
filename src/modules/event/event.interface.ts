@@ -1,4 +1,4 @@
-import { Event, Team, User } from "../../../.prisma/client";
+import { Event, Team } from "../../../.prisma/client";
 import { CreateEventInputType, DeleteEventInputType } from "./event.schema";
 
 export interface IEventRepository {
