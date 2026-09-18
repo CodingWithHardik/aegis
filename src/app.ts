@@ -57,9 +57,9 @@ app.use(
 
 const healthController = new HealthController();
 
-app.get("/live", healthController.live);
-app.get("/ready", healthController.ready);
-app.get("/health", healthController.health);
+app.get("/live", healthController.live, { detail: { tags: ["Health"], summary: "Check status of website" } });
+app.get("/ready", healthController.ready, { detail: { tags: ["Health"], summary: "Check website if its ready" } });
+app.get("/health", healthController.health, { detail: { tags: ["Health"], summary: "Check website health" } });
 
 app.use(globalRateLimiter)
 
