@@ -4,7 +4,7 @@ import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { IRegisterRepository } from "./register.interface";
-import { CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
+import { AcceptPaymentInputType, CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
 
 export class RegisterRepository implements IRegisterRepository {
     async getRegisteration(data: GetRegisterInputType): Promise<Member[]> {
@@ -209,6 +209,32 @@ export class RegisterRepository implements IRegisterRepository {
                     data: {
                         paymentType: data.paymentType,
                         ...(data.paymentLink !== undefined && { paymentLink: data.paymentLink })
+                    }
+                })
+        )
+        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.register(result.id, "*", "*"))
+        invalidate(cacheKeys.register("*", result.eventId, result.userId))
+        return result;
+    }
+
+    async acceptPayment(data: AcceptPaymentInputType): Promise<Member> {
+        const result = await measureQuery(
+            "acceptPayment",
+            () =>
+                prisma.member.update({
+                    where: data.memberId ?
+                        {
+                            id: data.memberId
+                        } :
+                        {
+                            eventId_userId: {
+                                eventId: data.eventId!,
+                                userId: data.userId!
+                            }
+                        },
+                    data: {
+                        applicationStatus: "PROCESSED"
                     }
                 })
         )

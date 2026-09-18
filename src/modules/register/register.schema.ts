@@ -218,6 +218,23 @@ export const paymentChangeSchema = z.object({
     }
 })
 
+export const acceptPaymentSchema = z.object({
+    memberId: z.string().trim().optional(),
+    eventId: z.string().trim().optional(),
+    userId: z.string().trim().optional()
+}).strict()
+.superRefine((data, ctx) => {
+    const hasMemberId = !!data.memberId;
+    const hasEventAndUserId = !!data.eventId && !!data.userId;
+    if (!hasMemberId && !hasEventAndUserId) {
+        ctx.addIssue({
+            code: "custom",
+            message: "Provide either memberId or both eventId and userId",
+            path: ["memberId", "eventId", "userId"]
+        })
+    }
+})
+
 export type GetRegisterInputType = z.infer<typeof getRegisterSchema>;
 export type CreateMemberInputType = z.infer<typeof createMemberSchema>;
 export type UpdateMemberInputType = z.infer<typeof updateMemberSchema>;
@@ -225,3 +242,4 @@ export type DeleteMemberInputType = z.infer<typeof deleteMemberSchema>;
 export type RoleChangeInputType = z.infer<typeof roleChangeSchema>;
 export type StatusChangeInputType = z.infer<typeof statusChangeSchema>;
 export type PaymentChangeInputType = z.infer<typeof paymentChangeSchema>;
+export type AcceptPaymentInputType = z.infer<typeof acceptPaymentSchema>;
