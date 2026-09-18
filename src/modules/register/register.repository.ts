@@ -4,7 +4,7 @@ import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { IRegisterRepository } from "./register.interface";
-import { CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, UpdateMemberInputType } from "./register.schema";
+import { CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, RoleChangeInputType, UpdateMemberInputType } from "./register.schema";
 
 export class RegisterRepository implements IRegisterRepository {
     async getRegisteration(data: GetRegisterInputType): Promise<Member[]> {
@@ -131,6 +131,32 @@ export class RegisterRepository implements IRegisterRepository {
                                 userId: data.userId!
                             }
                         }
+                })
+        )
+        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.register(result.id, "*", "*"))
+        invalidate(cacheKeys.register("*", result.eventId, result.userId))
+        return result;
+    }
+
+    async roleChange(data: RoleChangeInputType): Promise<Member> {
+        const result = await measureQuery(
+            "roleChange",
+            () =>
+                prisma.member.update({
+                    where: data.memberId ?
+                        {
+                            id: data.memberId
+                        } :
+                        {
+                            eventId_userId: {
+                                eventId: data.eventId!,
+                                userId: data.userId!
+                            }
+                        },
+                    data: {
+                        role: data.role
+                    }
                 })
         )
         invalidate(cacheKeys.registerationId(result.id))

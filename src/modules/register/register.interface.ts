@@ -1,5 +1,5 @@
 import { Member, Role, User } from "../../../.prisma/client";
-import { CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, UpdateMemberInputType } from "./register.schema";
+import { CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, RoleChangeInputType, UpdateMemberInputType } from "./register.schema";
 
 export interface IRegisterRepository {
     getRegisteration(data: GetRegisterInputType): Promise<Member[]>;
@@ -8,4 +8,5 @@ export interface IRegisterRepository {
     registerMember(data: CreateMemberInputType, user: User): Promise<Member>;
     deleteMember(data: DeleteMemberInputType): Promise<Member>;
     updateMember(data: UpdateMemberInputType): Promise<Member>;
+    roleChange(data: RoleChangeInputType): Promise<Member>;
 }

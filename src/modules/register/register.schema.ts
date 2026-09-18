@@ -110,7 +110,36 @@ export const deleteMemberSchema = z.object({
     }
 )
 
+export const roleChangeSchema = z.object({
+    memberId: z.string().trim().optional(),
+    eventId: z.string().trim().optional(),
+    userId: z.string().trim().optional(),
+    role: z.enum([
+        "BOARD_MEMBER",
+        "MEMBER"
+    ])
+}).strict()
+.superRefine((data, ctx) => {
+    const hasMemberId = !!data.memberId;
+    const hasEventAndUserId = !!data.eventId && !!data.userId;
+    if (!hasMemberId && !hasEventAndUserId) {
+        ctx.addIssue({
+            code: "custom",
+            message: "Provide either memberId or both eventId and userId",
+            path: ["memberId", "eventId", "userId"]
+        })
+    }
+    if (data.role === undefined) {
+        ctx.addIssue({
+            code: "custom",
+            message: "Role is required",
+            path: ["role"]
+        })
+    }
+})
+
 export type GetRegisterInputType = z.infer<typeof getRegisterSchema>;
 export type CreateMemberInputType = z.infer<typeof createMemberSchema>;
 export type UpdateMemberInputType = z.infer<typeof updateMemberSchema>;
 export type DeleteMemberInputType = z.infer<typeof deleteMemberSchema>;
+export type RoleChangeInputType = z.infer<typeof roleChangeSchema>;
