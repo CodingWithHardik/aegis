@@ -110,9 +110,7 @@ export class RegisterService {
                 throw new AppError("Unauthorized", 403);
             if (
                 getRole.role !== "SUPER_ADMIN" &&
-                getRole.role !== "ADMIN" &&
-                getRole.role !== "DELEGATE_AFFAIRS" &&
-                getRole.role !== "FINANCE_MANAGER"
+                getRole.role !== "ADMIN"
             )
                 throw new AppError("Unauthorized", 403)
         }
