@@ -50,7 +50,17 @@ app.use(
       ]
     },
     mapJsonSchema: {
-      zod: z.toJSONSchema,
+      zod: (schema: z.ZodType) => 
+        z.toJSONSchema(schema, {
+          io: "input",
+          unrepresentable: "any",
+          override: (ctx) => {
+            if (ctx.zodSchema._zod.def.type === "date") {
+              ctx.jsonSchema.type = "string";
+              ctx.jsonSchema.format = "date-time"
+            }
+          },
+        }),
     }
   })
 )
