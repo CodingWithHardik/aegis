@@ -5,7 +5,7 @@ import { AuthSingleton } from "../../types/singleton";
 import { acceptPaymentSchema, allotCommitteeSchema, createMemberSchema, deleteMemberSchema, getRegisterSchema, paymentChangeSchema, roleChangeSchema, updateMemberSchema } from "./register.schema";
 import { validated } from "../../utils/common/validation/validated";
 
-const router = new Elysia({ prefix: "/register" });
+const router = new Elysia({ prefix: "/registeration" });
 
 const registerController = new RegisterController();
 
@@ -24,7 +24,7 @@ router.use(
 router.use(
     new Elysia()
         .use(authMiddleware)
-        .post("/register",
+        .post("/add",
             ...validated<typeof createMemberSchema, AuthSingleton>(
                 createMemberSchema,
                 registerController.registerMember,
@@ -64,7 +64,7 @@ router.use(
             ...validated<typeof roleChangeSchema, AuthSingleton>(
                 roleChangeSchema,
                 registerController.roleChange,
-                { tags: ["Register"], summary: "Change role of a member"}
+                { tags: ["Register"], summary: "Change role of a registered event member"}
             )
         )
 )
