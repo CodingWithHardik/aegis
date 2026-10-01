@@ -1,3 +1,4 @@
+import { User } from "../../../.prisma/client";
 import { env } from "../../config/env.config";
 import { logger } from "../../config/logger";
 import { prisma } from "../../lib/prisma";
@@ -241,10 +242,11 @@ export class AuthService {
     };
   }
 
-  async updateAuth(data: UpdateUserInputType, userId: string) {
-    const user = await this.authRepo.findUserById(userId);
+  async updateAuth(data: UpdateUserInputType, user: User) {
+    const userId = user.isSuperAdmin && data.userId ? data.userId : user.id;
+    const targetUser = await this.authRepo.findUserById(userId);
 
-    if (!user) {
+    if (!targetUser) {
       throw new AppError("User Not Found", 404);
     }
 

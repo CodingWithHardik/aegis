@@ -5,6 +5,7 @@ import { authService } from "./auth.container";
 import { setAuthCookies } from "./auth.helper";
 import { sendResponse } from "../../utils/common/response/AppResponse";
 import { AuthContext } from "./auth.types";
+import { AuthSingleton } from "../../types/singleton";
 
 export class AuthController {
     registerUser = catchAsync(async (ctx: Context<{ body: RegisterUserInputType }>) => {
@@ -77,11 +78,11 @@ export class AuthController {
         })
     })
 
-    updateUser = catchAsync(async (ctx: Context<{ body: UpdateUserInputType }>) => {
-        const userId = ctx.body.userId;
+    updateUser = catchAsync(async (ctx: Context<{ body: UpdateUserInputType }, AuthSingleton>) => {
         const data = ctx.body;
-
-        const result = await authService.updateAuth(data, userId);
+        const user = ctx.user;
+        
+        const result = await authService.updateAuth(data, user);
 
         return sendResponse(ctx.set, 200, {
             success: true,

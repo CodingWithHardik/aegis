@@ -4,6 +4,7 @@ import { loginUserSchema, refreshAccessTokenSchema, registerUserSchema, updateUs
 import { authMiddleware } from "../../middleware/authentication.middleware";
 import { validated } from "../../utils/common/validation/validated";
 import { loginRateLimit } from "../../middleware/rate-limit/login-rate-limit.middleware"
+import { AuthSingleton } from "../../types/singleton";
 
 const router = new Elysia({ prefix: "/auth" });
 
@@ -54,8 +55,9 @@ router.use(
 
 router.use(
     new Elysia()
+        .use(authMiddleware)
         .post("/update", 
-            ...validated(
+            ...validated<typeof updateUserSchema, AuthSingleton>(
                 updateUserSchema,
                 authController.updateUser,
                 { tags: ["Auth"], summary: "Update user details" }
