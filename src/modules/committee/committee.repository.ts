@@ -70,7 +70,8 @@ export class CommitteeRepository implements ICommitteeRepository {
                     data,
                 })
         )
-        invalidate(cacheKeys.committeeByEventIdAndCommitteeId("*", result.eventId));
+        invalidate(cacheKeys.committeeByEventIdAndCommitteeId(result.id, "*"));
+        invalidate(cacheKeys.committeeByEventIdAndCommitteeId(undefined, undefined));
         invalidate(cacheKeys.committeeId(result.id));
         return result;
     }
@@ -92,7 +93,8 @@ export class CommitteeRepository implements ICommitteeRepository {
                     }
                 })
         )
-        invalidate(cacheKeys.committeeByEventIdAndCommitteeId("*", result.eventId));
+        invalidate(cacheKeys.committeeByEventIdAndCommitteeId(result.id, "*"));
+        invalidate(cacheKeys.committeeByEventIdAndCommitteeId(undefined, undefined));
         invalidate(cacheKeys.committeeId(result.id));
         return result;
     }
@@ -107,7 +109,8 @@ export class CommitteeRepository implements ICommitteeRepository {
                     }
                 })
         )
-        invalidate(cacheKeys.committeeByEventIdAndCommitteeId("*", result.eventId));
+        invalidate(cacheKeys.committeeByEventIdAndCommitteeId(result.id, "*"));
+        invalidate(cacheKeys.committeeByEventIdAndCommitteeId(undefined, undefined));
         invalidate(cacheKeys.committeeId(result.id));
         return result;
     }
