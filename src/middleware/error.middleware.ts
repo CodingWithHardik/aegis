@@ -24,6 +24,22 @@ const BUILTIN: Record<string, { statusCode: number; message?: string }> = {
     INVALID_FILE_TYPE: { statusCode: 422 },
 }
 
+export const formatValidationErrorMessage = (error: unknown): string | undefined => {
+    const issues = ((error as any)?.all ?? []) as any[];
+    if (!Array.isArray(issues) || issues.length === 0) return undefined;
+
+    return issues
+        .map((issue) => {
+            const rawPath = issue.path ?? [];
+            const field = Array.isArray(rawPath) 
+                ? rawPath.join(".") 
+                : String(rawPath).replace(/^\//, "").replace(/\//g, ".");
+            const message = issue?.message ?? issue?.summary ?? "Invalid value";
+            return field ? `${field}: ${message}` : message;
+        })
+        .join(", ");
+}
+
 export const globalErrorHandler = new Elysia({
     name : "global-error-handler"
 })
@@ -34,12 +50,16 @@ export const globalErrorHandler = new Elysia({
     const statusCode = 
         builtin?.statusCode ?? 
         (error as any).statusCode ??
-        (error as any).status ??
+        (typeof (error as any).status === "number" ? (error as any).status : undefined) ??
         500;
     
-    const message = 
+    let message = 
         builtin?.message ??
         (error instanceof Error ? error.message : String(error));
+
+    if (code === "VALIDATION") {
+        message = formatValidationErrorMessage(error) ?? "Validation failed";
+    }
 
     const status = 
         (error as any).status && typeof (error as any).status === "string"
