@@ -72,7 +72,7 @@ export const updateMemberSchema = z.object({
 .superRefine((data, ctx) => {
     const hasMemberId = !!data.memberId;
     const hasEventAndUserId = !!data.eventId && !!data.userId;
-    if (!hasMemberId && hasEventAndUserId) {
+    if (!hasMemberId && !hasEventAndUserId) {
         ctx.addIssue({
             code: "custom",
             message: "Provide either memberId or both eventId and userId",
