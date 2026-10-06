@@ -50,8 +50,12 @@ bunx --bun prisma migrate deploy
 bunx --bun prisma generate
 ```
 ### Running 
+- Development
 ```
 bun run dev
+```
+- Production
+```
 bun run prod
 ```
 Server Address will be `http://localhost:3000/`
@@ -64,3 +68,9 @@ Server Address will be `http://localhost:3000/`
     "password": "@test123"
 }
 ```
+
+## Documentation 
+[API Documentation](https://aegis.dpskmun.com/docs)
+
+## Screenshots 
+![](https://cdn.dpskmun.com/ss/AEGIS_DOCS_SS_1.png)
