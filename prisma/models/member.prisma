@@ -2,6 +2,7 @@ model Member {
     id String @id @default(uuid())
     name String
     about String?
+    institution String
     eventId String
     event Event @relation(fields: [eventId], references: [id])
     committeeId String?

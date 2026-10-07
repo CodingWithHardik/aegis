@@ -69,7 +69,6 @@ export class AuthRepository implements IAuthRepository {
                 data: {
                     ...(data.name !== undefined && { name: data.name }),
                     ...(data.phoneNo !== undefined && { phoneNo: data.phoneNo }),
-                    ...(data.instution !== undefined && { instution: data.instution }),
                 }
             })
         )

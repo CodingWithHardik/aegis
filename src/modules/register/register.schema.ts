@@ -44,6 +44,7 @@ export const getRegisterSchema = z.object({
 export const createMemberSchema = z.object({
     name: z.string().trim().min(3, "Name must be at least 3 characters long").max(50, "Name must be at most 50 characters long"),
     about: z.string().trim().min(10, "About must be at least 10 characters long").max(500, "About must be at most 500 characters long").optional(),
+    institution: z.string().trim().min(3, "Institution must be at least 3 characters long").max(50, "Institution must be at most 50 characters long"),
     eventId: z.string().trim(),
     class: z.string().trim(),
     section: z.string().trim().optional(),
@@ -63,6 +64,7 @@ export const updateMemberSchema = z.object({
     userId: z.string().trim().optional(),
     name: z.string().trim().min(3, "Name must be at least 3 characters long").max(50, "Name must be at most 50 characters long").optional(),
     about: z.string().trim().min(10, "About must be at least 10 characters long").max(500, "About must be at most 500 characters long").optional(),
+    institution: z.string().trim().min(3, "Institution must be at least 3 characters long").max(50, "Institution must be at most 50 characters long").optional(),
     class: z.string().trim().optional(),
     section: z.string().trim().optional(),
     munExperience: z.number().int().optional(),
@@ -82,6 +84,7 @@ export const updateMemberSchema = z.object({
     if (
         data.name !== undefined ||
         data.about !== undefined ||
+        data.institution !== undefined ||
         data.class !== undefined ||
         data.section !== undefined ||
         data.munExperience !== undefined ||
@@ -91,7 +94,7 @@ export const updateMemberSchema = z.object({
         ctx.addIssue({
             code: "custom",
             message: "At least one field to update must be provided",
-            path: ["name", "about", "class", "section", "munExperience", "munAchievements", "additionalInfo"]
+            path: ["name", "about", "institution", "class", "section", "munExperience", "munAchievements", "additionalInfo"]
         })
     }
 })

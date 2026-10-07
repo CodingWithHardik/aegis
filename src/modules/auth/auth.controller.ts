@@ -9,13 +9,12 @@ import { AuthSingleton } from "../../types/singleton";
 
 export class AuthController {
     registerUser = catchAsync(async (ctx: Context<{ body: RegisterUserInputType }>) => {
-        const { name, email, password, instution } = ctx.body;
+        const { name, email, password } = ctx.body;
 
         const result = await authService.registerUserService({
             name,
             email,
             password,
-            instution,
         })
 
         setAuthCookies(ctx.cookie, result.refreshToken)

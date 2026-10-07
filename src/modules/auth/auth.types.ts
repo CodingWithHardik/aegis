@@ -9,7 +9,6 @@ export type UserResponseType = {
     googleId: string | null;
     passwordHash: string | null;
     phoneNo: string | null;
-    instution: string | null;
     isSuperAdmin: boolean;
     banStatus: "BANNED" | "UNBANNED";
     createdAt: Date;
@@ -18,13 +17,11 @@ export type UserResponseType = {
 
 export type RegisterUserType = {
     name: string;
-    instution: string | null;
     email: string;
     emailHash: string;
     passwordHash: string;
 } | {
     name: string;
-    instution: string;
     email: string;
     googleId: string;
 }

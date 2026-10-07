@@ -102,6 +102,7 @@ export class RegisterRepository implements IRegisterRepository {
                     data: {
                         ...(data.name !== undefined && { name: data.name }),
                         ...(data.about !== undefined && { about: data.about }),
+                        ...(data.institution !== undefined && { institution: data.institution }),
                         ...(data.class !== undefined && { class: data.class }),
                         ...(data.section !== undefined && { section: data.section }),
                         ...(data.munExperience !== undefined && { munExperience: data.munExperience }),

@@ -5,6 +5,7 @@ export const toRegisterResponse = (register: RegisterResponseType) => {
         id: register.id,
         name: register.name,
         ...(register.about != null && { about: register.about }),
+        ...(register.institution != null && { institution: register.institution }),
         role: register.role,
         ...(register.portfolio != null && { portfolio: register.portfolio }),
         applicationStatus: register.applicationStatus,
