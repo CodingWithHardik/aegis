@@ -60,15 +60,6 @@ bun run prod
 ```
 Server Address will be `http://localhost:3000/`
 
-### Test User With Super Admin Permission
-```
-{
-    "name": "Hackclub",
-    "email": "test@dpskmun.com",
-    "password": "@test123"
-}
-```
-
 ## Documentation 
 [API Documentation](https://aegis.dpskmun.com/docs)
 
