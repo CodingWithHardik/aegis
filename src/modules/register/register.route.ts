@@ -5,7 +5,7 @@ import { AuthSingleton } from "../../types/singleton";
 import { acceptPaymentSchema, allotCommitteeSchema, createMemberSchema, deleteMemberSchema, getRegisterSchema, paymentChangeSchema, roleChangeSchema, statusChangeSchema, updateMemberSchema } from "./register.schema";
 import { validated } from "../../utils/common/validation/validated";
 
-const router = new Elysia({ prefix: "/registeration" });
+const router = new Elysia({ prefix: "/registration" });
 
 const registerController = new RegisterController();
 
@@ -15,8 +15,8 @@ router.use(
         .post("/",
             ...validated<typeof getRegisterSchema, AuthSingleton>(
                 getRegisterSchema,
-                registerController.getRegisteration,
-                { tags: ["Register"], summary: "Get a specific registeration" }
+                registerController.getRegistration,
+                { tags: ["Register"], summary: "Get a specific registration" }
             )
         )
 )
@@ -28,7 +28,7 @@ router.use(
             ...validated<typeof createMemberSchema, AuthSingleton>(
                 createMemberSchema,
                 registerController.registerMember,
-                { tags: ["Register"], summary: "Do registeration of a user"}
+                { tags: ["Register"], summary: "Do registration of a user"}
             )
         )
 )

@@ -13,6 +13,6 @@ export const cacheKeys = {
     committeeByEventIdAndCommitteeId: (committeeId?: string, eventId?: string) => `committee:eventId:${eventId}:committeeId:${committeeId}`,
     committeeId: (committeeId: string) => `committee:committeeId:${committeeId}`,
     register: (registerId?: string, eventId?: string, userId?: string) => `register:id:${registerId}:eventId:${eventId}userId:${userId}`,
-    registerationId: (memberId: string) => `register:id:${memberId}`,
+    registrationId: (memberId: string) => `register:id:${memberId}`,
     subscriptionNewsletter: (email: string) => `subscriptionNewsletter:${email}`
 }

@@ -7,9 +7,9 @@ import { IRegisterRepository } from "./register.interface";
 import { AcceptPaymentInputType, AllotCommitteeInputType, CreateMemberInputType, DeleteMemberInputType, GetRegisterInputType, PaymentChangeInputType, RoleChangeInputType, StatusChangeInputType, UpdateMemberInputType } from "./register.schema";
 
 export class RegisterRepository implements IRegisterRepository {
-    async getRegisteration(data: GetRegisterInputType): Promise<Member[]> {
+    async getRegistration(data: GetRegisterInputType): Promise<Member[]> {
         return cachedQuery(
-            "getRegisteration",
+            "getRegistration",
             {
                 key: cacheKeys.register(data.id, data.eventId, data.userId),
                 ttl: 600,
@@ -29,11 +29,11 @@ export class RegisterRepository implements IRegisterRepository {
         )
     }
 
-    async getRegisterationById({ id }: { id: string }): Promise<Member | null> {
+    async getRegistrationById({ id }: { id: string }): Promise<Member | null> {
         return cachedQuery(
-            "getRegisterationById",
+            "getRegistrationById",
             {
-                key: cacheKeys.registerationId(id),
+                key: cacheKeys.registrationId(id),
                 ttl: 600
             }, 
             () => 
@@ -78,7 +78,7 @@ export class RegisterRepository implements IRegisterRepository {
                     },
                 })
         )
-        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.registrationId(result.id))
         invalidate(cacheKeys.register(result.id, "*", "*"))
         invalidate(cacheKeys.register("*", result.eventId, result.userId))
         return result;
@@ -111,7 +111,7 @@ export class RegisterRepository implements IRegisterRepository {
                     }
                 })
         )
-        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.registrationId(result.id))
         invalidate(cacheKeys.register(result.id, "*", "*"))
         invalidate(cacheKeys.register("*", result.eventId, result.userId))
         return result;
@@ -134,7 +134,7 @@ export class RegisterRepository implements IRegisterRepository {
                         }
                 })
         )
-        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.registrationId(result.id))
         invalidate(cacheKeys.register(result.id, "*", "*"))
         invalidate(cacheKeys.register("*", result.eventId, result.userId))
         return result;
@@ -160,7 +160,7 @@ export class RegisterRepository implements IRegisterRepository {
                     }
                 })
         )
-        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.registrationId(result.id))
         invalidate(cacheKeys.register(result.id, "*", "*"))
         invalidate(cacheKeys.register("*", result.eventId, result.userId))
         return result;
@@ -186,7 +186,7 @@ export class RegisterRepository implements IRegisterRepository {
                     }
                 })
         )
-        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.registrationId(result.id))
         invalidate(cacheKeys.register(result.id, "*", "*"))
         invalidate(cacheKeys.register("*", result.eventId, result.userId))
         return result;
@@ -213,7 +213,7 @@ export class RegisterRepository implements IRegisterRepository {
                     }
                 })
         )
-        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.registrationId(result.id))
         invalidate(cacheKeys.register(result.id, "*", "*"))
         invalidate(cacheKeys.register("*", result.eventId, result.userId))
         return result;
@@ -239,7 +239,7 @@ export class RegisterRepository implements IRegisterRepository {
                     }
                 })
         )
-        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.registrationId(result.id))
         invalidate(cacheKeys.register(result.id, "*", "*"))
         invalidate(cacheKeys.register("*", result.eventId, result.userId))
         return result;
@@ -270,7 +270,7 @@ export class RegisterRepository implements IRegisterRepository {
                     }
                 })
         )
-        invalidate(cacheKeys.registerationId(result.id))
+        invalidate(cacheKeys.registrationId(result.id))
         invalidate(cacheKeys.register(result.id, "*", "*"))
         invalidate(cacheKeys.register("*", result.eventId, result.userId))
         return result;

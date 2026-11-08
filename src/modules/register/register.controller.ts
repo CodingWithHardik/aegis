@@ -6,14 +6,14 @@ import { registerService } from "./register.container";
 import { sendResponse } from "../../utils/common/response/AppResponse";
 
 export class RegisterController {
-    getRegisteration = catchAsync(async (ctx: Context<{ body: GetRegisterInputType }, AuthSingleton>) => {
-        const result = await registerService.getRegisteration(ctx.body, ctx.user);
+    getRegistration = catchAsync(async (ctx: Context<{ body: GetRegisterInputType }, AuthSingleton>) => {
+        const result = await registerService.getRegistration(ctx.body, ctx.user);
 
         return sendResponse(ctx.set, 200, {
             success: true,
-            message: "Registeration fetched successfully",
+            message: "Registration fetched successfully",
             data: {
-                registeration: result
+                registration: result
             }
         })
     })
@@ -25,7 +25,7 @@ export class RegisterController {
             success: true,
             message: "Registered Successfully",
             data: {
-                registeration: result
+                registration: result
             }
         })
     })
@@ -37,7 +37,7 @@ export class RegisterController {
             success: true,
             message: "Updated User Successfully",
             data: {
-                registeration: result
+                registration: result
             }
         })
     })
@@ -49,7 +49,7 @@ export class RegisterController {
             success: true,
             message: "Deleted User Successfully",
             data: {
-                registeration: result
+                registration: result
             }
         })
     })
@@ -61,7 +61,7 @@ export class RegisterController {
             success: true,
             message: "Role Changed Successfully",
             data: {
-                registeration: result
+                registration: result
             }
         })
     })
@@ -73,7 +73,7 @@ export class RegisterController {
             success: true,
             message: "Role Changed Successfully",
             data: {
-                registeration: result
+                registration: result
             }
         })
     })
@@ -85,7 +85,7 @@ export class RegisterController {
             success: true,
             message: "Payment Mode Changed Successfully",
             data: {
-                registeration: result
+                registration: result
             }
         })
     })
@@ -97,7 +97,7 @@ export class RegisterController {
             success: true,
             message: "Successfully Accepted Payment of the User",
             data: {
-                registeration: result
+                registration: result
             }
         })
     })
@@ -109,7 +109,7 @@ export class RegisterController {
             success: true,
             message: "Successfully Alloted Committee to the User",
             data: {
-                registeration: result
+                registration: result
             }
         })
     })

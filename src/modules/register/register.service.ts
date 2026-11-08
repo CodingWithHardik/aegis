@@ -7,15 +7,15 @@ import { AcceptPaymentInputType, AllotCommitteeInputType, CreateMemberInputType,
 export class RegisterService {
     constructor(private registerRepo: IRegisterRepository) {};
 
-    async getRegisteration(data: GetRegisterInputType, user: User) {
+    async getRegistration(data: GetRegisterInputType, user: User) {
         if (!user.isSuperAdmin) {
             if (!data.eventId && !data.id) 
-                throw new AppError("EventId or RegisterationId is required", 400);
-            const eventIdByRegisteration = data.id ?
-                await this.registerRepo.getRegisterationById({ id: data.id }) : null;
-            if (!eventIdByRegisteration && data.id) 
+                throw new AppError("EventId or RegistrationId is required", 400);
+            const eventIdByRegistration = data.id ?
+                await this.registerRepo.getRegistrationById({ id: data.id }) : null;
+            if (!eventIdByRegistration && data.id) 
                 throw new AppError("Unauthorized", 403)
-            const eventId = eventIdByRegisteration ? eventIdByRegisteration.eventId : data.eventId;
+            const eventId = eventIdByRegistration ? eventIdByRegistration.eventId : data.eventId;
             if (!eventId)
                 throw new AppError("EventId is required", 400);
             const getRole = await this.registerRepo.getRoleByEventIdAdnUserId({ eventId: eventId, userId: user.id })
@@ -23,7 +23,7 @@ export class RegisterService {
                 throw new AppError("Unauthorized", 403);
         }
 
-        const result = await this.registerRepo.getRegisteration(data) ?? [];
+        const result = await this.registerRepo.getRegistration(data) ?? [];
 
         return toRegisterGetResponse(result);
     }
@@ -36,11 +36,11 @@ export class RegisterService {
 
     async deleteMember(data: DeleteMemberInputType, user: User) {
         if (!user.isSuperAdmin) {
-            const eventIdByRegisteration = data.memberId ?
-                await this.registerRepo.getRegisterationById({ id: data.memberId }) : null;
-            if (!eventIdByRegisteration && data.memberId) 
+            const eventIdByRegistration = data.memberId ?
+                await this.registerRepo.getRegistrationById({ id: data.memberId }) : null;
+            if (!eventIdByRegistration && data.memberId) 
                 throw new AppError("Unauthorized", 403)
-            const eventId = eventIdByRegisteration ? eventIdByRegisteration.eventId : data.eventId;
+            const eventId = eventIdByRegistration ? eventIdByRegistration.eventId : data.eventId;
             if (!eventId)
                 throw new AppError("EventId is required", 400);
             const getRole = await this.registerRepo.getRoleByEventIdAdnUserId({ eventId: eventId, userId: user.id })
@@ -61,11 +61,11 @@ export class RegisterService {
 
     async updateMember(data: UpdateMemberInputType, user: User) {
         if (!user.isSuperAdmin) {
-            const eventIdByRegisteration = data.memberId ?
-                await this.registerRepo.getRegisterationById({ id: data.memberId }) : null;
-            if (!eventIdByRegisteration && data.memberId) 
+            const eventIdByRegistration = data.memberId ?
+                await this.registerRepo.getRegistrationById({ id: data.memberId }) : null;
+            if (!eventIdByRegistration && data.memberId) 
                 throw new AppError("Unauthorized", 403)
-            const eventId = eventIdByRegisteration ? eventIdByRegisteration.eventId : data.eventId;
+            const eventId = eventIdByRegistration ? eventIdByRegistration.eventId : data.eventId;
             if (!eventId)
                 throw new AppError("EventId is required", 400);
             const getRole = await this.registerRepo.getRoleByEventIdAdnUserId({ eventId: eventId, userId: user.id })
@@ -79,11 +79,11 @@ export class RegisterService {
 
     async roleChange(data: RoleChangeInputType, user: User) {
         if (!user.isSuperAdmin) {
-            const eventIdByRegisteration = data.memberId ?
-                await this.registerRepo.getRegisterationById({ id: data.memberId }) : null;
-            if (!eventIdByRegisteration && data.memberId) 
+            const eventIdByRegistration = data.memberId ?
+                await this.registerRepo.getRegistrationById({ id: data.memberId }) : null;
+            if (!eventIdByRegistration && data.memberId) 
                 throw new AppError("Unauthorized", 403)
-            const eventId = eventIdByRegisteration ? eventIdByRegisteration.eventId : data.eventId;
+            const eventId = eventIdByRegistration ? eventIdByRegistration.eventId : data.eventId;
             if (!eventId)
                 throw new AppError("EventId is required", 400);
             const getRole = await this.registerRepo.getRoleByEventIdAdnUserId({ eventId: eventId, userId: user.id })
@@ -98,11 +98,11 @@ export class RegisterService {
     
     async statusChange(data: StatusChangeInputType, user: User) {
         if (!user.isSuperAdmin) {
-            const eventIdByRegisteration = data.memberId ?
-                await this.registerRepo.getRegisterationById({ id: data.memberId }) : null;
-            if (!eventIdByRegisteration && data.memberId) 
+            const eventIdByRegistration = data.memberId ?
+                await this.registerRepo.getRegistrationById({ id: data.memberId }) : null;
+            if (!eventIdByRegistration && data.memberId) 
                 throw new AppError("Unauthorized", 403)
-            const eventId = eventIdByRegisteration ? eventIdByRegisteration.eventId : data.eventId;
+            const eventId = eventIdByRegistration ? eventIdByRegistration.eventId : data.eventId;
             if (!eventId)
                 throw new AppError("EventId is required", 400);
             const getRole = await this.registerRepo.getRoleByEventIdAdnUserId({ eventId: eventId, userId: user.id })
@@ -122,11 +122,11 @@ export class RegisterService {
 
     async paymentStatusChange(data: PaymentChangeInputType, user: User) {
         if (!user.isSuperAdmin) {
-            const eventIdByRegisteration = data.memberId ?
-                await this.registerRepo.getRegisterationById({ id: data.memberId }) : null;
-            if (!eventIdByRegisteration && data.memberId) 
+            const eventIdByRegistration = data.memberId ?
+                await this.registerRepo.getRegistrationById({ id: data.memberId }) : null;
+            if (!eventIdByRegistration && data.memberId) 
                 throw new AppError("Unauthorized", 403)
-            const eventId = eventIdByRegisteration ? eventIdByRegisteration.eventId : data.eventId;
+            const eventId = eventIdByRegistration ? eventIdByRegistration.eventId : data.eventId;
             if (!eventId)
                 throw new AppError("EventId is required", 400);
             const getRole = await this.registerRepo.getRoleByEventIdAdnUserId({ eventId: eventId, userId: user.id })
@@ -147,11 +147,11 @@ export class RegisterService {
 
     async acceptPayment(data: AcceptPaymentInputType, user: User) {
         if (!user.isSuperAdmin) {
-            const eventIdByRegisteration = data.memberId ?
-                await this.registerRepo.getRegisterationById({ id: data.memberId }) : null;
-            if (!eventIdByRegisteration && data.memberId) 
+            const eventIdByRegistration = data.memberId ?
+                await this.registerRepo.getRegistrationById({ id: data.memberId }) : null;
+            if (!eventIdByRegistration && data.memberId) 
                 throw new AppError("Unauthorized", 403)
-            const eventId = eventIdByRegisteration ? eventIdByRegisteration.eventId : data.eventId;
+            const eventId = eventIdByRegistration ? eventIdByRegistration.eventId : data.eventId;
             if (!eventId)
                 throw new AppError("EventId is required", 400);
             const getRole = await this.registerRepo.getRoleByEventIdAdnUserId({ eventId: eventId, userId: user.id })
@@ -172,11 +172,11 @@ export class RegisterService {
 
     async allotCommittee(data: AllotCommitteeInputType, user: User) {
         if (!user.isSuperAdmin) {
-            const eventIdByRegisteration = data.memberId ?
-                await this.registerRepo.getRegisterationById({ id: data.memberId }) : null;
-            if (!eventIdByRegisteration && data.memberId) 
+            const eventIdByRegistration = data.memberId ?
+                await this.registerRepo.getRegistrationById({ id: data.memberId }) : null;
+            if (!eventIdByRegistration && data.memberId) 
                 throw new AppError("Unauthorized", 403)
-            const eventId = eventIdByRegisteration ? eventIdByRegisteration.eventId : data.eventId;
+            const eventId = eventIdByRegistration ? eventIdByRegistration.eventId : data.eventId;
             if (!eventId)
                 throw new AppError("EventId is required", 400);
             const getRole = await this.registerRepo.getRoleByEventIdAdnUserId({ eventId: eventId, userId: user.id })

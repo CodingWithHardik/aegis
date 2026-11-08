@@ -1,5 +1,5 @@
 # AEGIS
-Aegis is the poweful backend API for dpskmun.com. It's our school platforms that is powering our School's MUN events from registeration to committee to organizing team managemnet
+Aegis is the poweful backend API for dpskmun.com. It's our school platforms that is powering our School's MUN events from registration to committee to organizing team managemnet
 
 ## Tech Stack
 Built with Elysia on the Bun runtime to make it fast, with using of postgreSQL via Prisma and cache with Redis.
