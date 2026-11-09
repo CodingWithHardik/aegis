@@ -4,10 +4,12 @@ import eventRouter from "../../modules/event/event.route";
 import teamRouter from "../../modules/team/team.route";
 import committeeRouter from "../../modules/committee/committee.route";
 import registerRouter from "../../modules/register/register.route";
+import newsletterRouter from "../../modules/newsletter/newsletter.route";
 
 export const versionRouteController = new Elysia()
 .use(authRouter)
 .use(eventRouter)
 .use(teamRouter)
 .use(committeeRouter)
-.use(registerRouter);
+.use(registerRouter)
+.use(newsletterRouter);
