@@ -46,6 +46,7 @@ app.use(
         { name: "Event", description: "Event Endpoints" },
         { name: "Register", description: "Register Endpoints" },
         { name: "Team", description: "Team Endpoints" },
+        { name: "NewsLetters", description: "Newsletter Endpoints" },
         { name: "Health", description: "Health Checks" },
       ]
     },
