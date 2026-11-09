@@ -1,8 +1,10 @@
 import { Context } from "elysia";
 import { catchAsync } from "../../utils/common/helpers/CacheAsync";
-import { SubscribeNewsletterInputType } from "./newsletter.schema"
+import { emailValidation, SubscribeNewsletterInputType, UnsubscribeNewsletterInputType } from "./newsletter.schema"
 import { newsletterService } from "./newsletter.container";
 import { sendResponse } from "../../utils/common/response/AppResponse";
+import { base62Decode } from "./newsletter.helper";
+import { AppError } from "../../utils/common/Errors/AppError";
 
 export class NewsletterController {
     subscribeNewsletter = catchAsync(async (ctx: Context<{ body: SubscribeNewsletterInputType }>) => {
@@ -14,6 +16,24 @@ export class NewsletterController {
             data: {
                 newsletter: result
             }
+        })
+    })
+
+    unsubscribeNewsletter = catchAsync(async (ctx: Context<{ body: UnsubscribeNewsletterInputType }>) => {
+        const decodedToken = base62Decode(ctx.body.token);
+        if (!decodedToken.success) {
+            throw new AppError("Invalid Token", 400)
+        }
+        const emailParsing = emailValidation.safeParse(decodedToken.email);
+        if (!emailParsing.success) {
+            throw new AppError("Invalid Token", 400)
+        }
+        const data = { email: emailParsing.data };
+        await newsletterService.unsubscribeNewsletterService(data);
+
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "Successfully unsubscribed from newsletter"
         })
     })
 }

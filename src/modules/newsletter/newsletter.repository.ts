@@ -1,10 +1,10 @@
 import { Subscriptions } from "../../../.prisma/client";
 import { prisma } from "../../lib/prisma";
-import { cachedQuery } from "../../utils/common/helpers/CacheQuery";
+import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { INewsletterRepository } from "./newsletter.interface";
-import { SubscribeNewsletterInputType } from "./newsletter.schema";
+import { SubscribeNewsletterInputType, UnsubscribeNewsletterServiceInputType } from "./newsletter.schema";
 
 export class NewsletterRepository implements INewsletterRepository {
     async findSubscription({ email }: { email: string; }): Promise<Subscriptions | null> {
@@ -24,6 +24,7 @@ export class NewsletterRepository implements INewsletterRepository {
     }
 
     async subscribeNewsletter(data: SubscribeNewsletterInputType): Promise<Subscriptions> {
+        invalidate(cacheKeys.subscriptionNewsletter(data.email))
         return measureQuery("subscribeNewsletter", () => 
             prisma.subscriptions.upsert({
                 where: data,
@@ -31,6 +32,18 @@ export class NewsletterRepository implements INewsletterRepository {
                 update: {
                     isActive: true,
                     unsubscribedAt: null
+                }
+            })
+        )
+    }
+
+    async unsubscribeNewsletter(data: UnsubscribeNewsletterServiceInputType): Promise<Subscriptions> {
+        return measureQuery("unsubscribeNewsletter", () => 
+            prisma.subscriptions.update({
+                where: data,
+                data: {
+                    isActive: false,
+                    unsubscribedAt: new Date(),
                 }
             })
         )
