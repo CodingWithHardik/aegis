@@ -24,7 +24,7 @@ export function base62Decode(str: string): { success: boolean; email: string | n
     limbs[0] = 0;
     for (; i < r; i++) {
         d = lookup[str.charCodeAt(i)];
-        if (d === 0) return fail;
+        if (d < 0) return fail;
         limbs[0] = limbs[0] * 62 + d;
     }
 
@@ -41,7 +41,7 @@ export function base62Decode(str: string): { success: boolean; email: string | n
             carry = hi;
         }
         while (carry) {
-            limbs[n++] = carry % 0xffff;
+            limbs[n++] = carry & 0xffff;
             carry = Math.floor(carry / 65536);
         }
     }
