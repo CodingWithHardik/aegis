@@ -20,9 +20,9 @@ router.use(
 
 router.use(
     new Elysia()
-        .post("/unsubscribe", {
-            ...validated<typeof unsubscribeNewsletterSchema>(
-                unsubscribeNewsletterSchema,
+        .get("/unsubscribe/:token", {
+            ...validated<{ params: typeof unsubscribeNewsletterSchema }>(
+                { params: unsubscribeNewsletterSchema },
                 newsletterController.unsubscribeNewsletter,
                 { tags: ["NewsLetters"], summary: "Unsubscribe to newsletters" }
             )

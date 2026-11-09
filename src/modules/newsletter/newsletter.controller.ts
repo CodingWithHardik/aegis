@@ -19,8 +19,8 @@ export class NewsletterController {
         })
     })
 
-    unsubscribeNewsletter = catchAsync(async (ctx: Context<{ body: UnsubscribeNewsletterInputType }>) => {
-        const decodedToken = base62Decode(ctx.body.token);
+    unsubscribeNewsletter = catchAsync(async (ctx: Context<{ params: UnsubscribeNewsletterInputType }>) => {
+        const decodedToken = base62Decode(ctx.params.token);
         if (!decodedToken.success) {
             throw new AppError("Invalid Token", 400)
         }
