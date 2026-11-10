@@ -12,6 +12,7 @@ model Event {
     team Team[]
     committees Committee[]
     members Member[]
+    attendance Attendance[]
     startDate DateTime
     endDate DateTime
     createdAt DateTime @default(now())
@@ -60,8 +61,22 @@ model Committee {
     capacity Int @default(0)
     eventId String
     members Member[]
+    attendance Attendance[]
     event Event @relation(fields: [eventId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     @@unique([slug, eventId])
+}
+
+model Attendance {
+    id String @id @default(uuid())
+    isPresent Boolean @default(false)
+    memberId String
+    member Member @relation(fields: [memberId], references: [id] )
+    committeeId String
+    committee Committee @relation(fields: [committeeId], references: [id])
+    eventId String
+    event Event @relation(fields: [eventId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }

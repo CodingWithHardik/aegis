@@ -20,6 +20,7 @@ model Member {
     munAchievements String?
     additionalInfo String?
     notes String?
+    attendance Attendance[]
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     @@unique([eventId, userId])

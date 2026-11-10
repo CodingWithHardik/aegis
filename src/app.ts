@@ -47,6 +47,7 @@ app.use(
         { name: "Register", description: "Register Endpoints" },
         { name: "Team", description: "Team Endpoints" },
         { name: "NewsLetters", description: "Newsletter Endpoints" },
+        { name: "Attendance", description: "Attendance Endpoints" },
         { name: "Health", description: "Health Checks" },
       ]
     },

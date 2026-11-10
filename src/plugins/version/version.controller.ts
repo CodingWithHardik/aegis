@@ -5,6 +5,7 @@ import teamRouter from "../../modules/team/team.route";
 import committeeRouter from "../../modules/committee/committee.route";
 import registerRouter from "../../modules/register/register.route";
 import newsletterRouter from "../../modules/newsletter/newsletter.route";
+import attendanceRouter from "../../modules/attendance/attendance.route";
 
 export const versionRouteController = new Elysia()
 .use(authRouter)
@@ -12,4 +13,5 @@ export const versionRouteController = new Elysia()
 .use(teamRouter)
 .use(committeeRouter)
 .use(registerRouter)
-.use(newsletterRouter);
+.use(newsletterRouter)
+.use(attendanceRouter);
