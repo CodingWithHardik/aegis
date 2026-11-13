@@ -19,4 +19,11 @@ export const markPresentAttendanceSchema = z
     })
     .strict();
 
-export type MarkPresentAttendanceInputType = z.infer<typeof markPresentAttendanceSchema>
+export const daysAttendanceSchema = z
+    .object({
+        committeeId: z.string().trim()
+    })
+    .strict();
+
+export type MarkPresentAttendanceInputType = z.infer<typeof markPresentAttendanceSchema>;
+export type DaysAttendanceInputType = z.infer<typeof daysAttendanceSchema>;

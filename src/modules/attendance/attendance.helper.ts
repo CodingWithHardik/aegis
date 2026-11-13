@@ -8,3 +8,12 @@ export const toDateOnly = (date: Date): Date => {
         shifted.getUTCDate(),
     ))
 }
+
+export const eachDay = (start: Date, end: Date): Date[] => {
+    const days: Date[] = [];
+    const last = toDateOnly(end);
+    for (let date = toDateOnly(start); date <= last; date = new Date(date.getTime() + 86400000)) {
+        days.push(date);
+    }
+    return days;
+}
