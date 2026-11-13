@@ -71,6 +71,7 @@ model Committee {
 model Attendance {
     id String @id @default(uuid())
     isPresent Boolean @default(false)
+    date DateTime @db.Date
     memberId String
     member Member @relation(fields: [memberId], references: [id] )
     committeeId String
@@ -79,4 +80,5 @@ model Attendance {
     event Event @relation(fields: [eventId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    @@unique([memberId, committeeId, date])
 }

@@ -1,6 +1,7 @@
 import { User } from "../../../.prisma/client";
 import { logger } from "../../config/logger";
 import { AppError } from "../../utils/common/Errors/AppError";
+import { toDateOnly } from "./attendance.helper";
 import { IAttendanceRepository } from "./attendance.interface";
 import { toAttendanceMarkResponse } from "./attendance.response";
 import { MarkPresentAttendanceInputType } from "./attendance.schema";
@@ -19,6 +20,21 @@ export class AttendanceService {
             throw new AppError("Unauthorized", 403)
         }
 
+        const event = await this.attendanceRepo.getEventById(committee.eventId)
+        if (!event) {
+            throw new AppError("Event Not found", 422)
+        }
+        const date = toDateOnly(new Date())
+        const start = toDateOnly(event.startDate)
+        const end = toDateOnly(event.endDate)
+
+        if (date < start) {
+            throw new AppError("Event not started", 422)
+        }
+        if (date > end) {
+            throw new AppError("Event already ended", 422)
+        }
+
         const ids = data.users.map((u) => u.memberId);
         const filterUser = await this.attendanceRepo.getMembersByCommitteeId(data.committeeId, ids);
         const foundIds = new Set(filterUser.map((m) => m.id));
@@ -32,6 +48,7 @@ export class AttendanceService {
             data.users,
             data.committeeId,
             committee.eventId,
+            date,
         )
 
         logger.info({
