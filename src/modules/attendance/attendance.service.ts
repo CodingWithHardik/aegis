@@ -60,6 +60,9 @@ export class AttendanceService {
             absent: data.users.filter((u) => !u.isPresent).map((u) => u.memberId),
         })
 
+        const newAttendanceStatus = committee.attendanceStatus === "MARKED" ? "MARKED_UPDATED" : "MARKED";
+        await this.attendanceRepo.addAttendanceStatus(committee.id, newAttendanceStatus)
+
         return toAttendanceMarkResponse(attendance)
     }
 

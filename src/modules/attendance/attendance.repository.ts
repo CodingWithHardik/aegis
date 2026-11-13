@@ -1,6 +1,6 @@
-import { Attendance, Committee, Event, Member } from "../../../.prisma/client";
+import { Attendance, AttendanceStatus, Committee, Event, Member } from "../../../.prisma/client";
 import { prisma } from "../../lib/prisma";
-import { cachedQuery } from "../../utils/common/helpers/CacheQuery";
+import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { IAttendanceRepository } from "./attendance.interface";
@@ -110,5 +110,23 @@ export class AttendanceRepository implements IAttendanceRepository {
                     )
                 )
         )
+    }
+
+    async addAttendanceStatus(committeeId: string, status: AttendanceStatus): Promise<Committee> {
+        const result = await measureQuery("addAttendanceStatus",
+            () => 
+                prisma.committee.update({
+                    where: {
+                        id: committeeId,
+                    },
+                    data: {
+                        attendanceStatus: status,
+                    }
+                })
+        )
+        invalidate(cacheKeys.committeeByEventIdAndCommitteeId(result.id, "*"));
+        invalidate(cacheKeys.committeeByEventIdAndCommitteeId(undefined, undefined));
+        invalidate(cacheKeys.committeeId(result.id));
+        return result;
     }
 }

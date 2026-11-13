@@ -62,6 +62,7 @@ model Committee {
     eventId String
     members Member[]
     attendance Attendance[]
+    attendanceStatus AttendanceStatus @default(NOT_MARKED)
     event Event @relation(fields: [eventId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -81,4 +82,10 @@ model Attendance {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     @@unique([memberId, committeeId, date])
+}
+
+enum AttendanceStatus {
+    NOT_MARKED
+    MARKED
+    MARKED_UPDATED
 }
