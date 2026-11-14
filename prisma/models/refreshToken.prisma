@@ -1,5 +1,5 @@
 model refreshToken {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   token     String   @unique
   familyId  String
   userId    String
