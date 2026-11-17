@@ -1,0 +1,63 @@
+enum TicketStatus {
+    OPEN
+    WAITING
+    RESOLVED
+    CLOSED
+}
+
+enum MessageDirection {
+    INBOUND
+    OUTBOUND
+}
+
+enum MessageSource {
+    WEBSITE
+    MAIL
+    ADMIN
+}
+
+model Ticket {
+    id String @id @default(uuid())
+    seq BigInt @default(autoincrement())
+    ticketId String @unique
+    customerName String
+    customerEmail String
+    customerPhoneNo String
+    userConnected Boolean @default(false)
+    userId String?
+    user User? @relation(fields: [userId], references: [id])
+    status TicketStatus
+    message Message[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    @@index([customerEmail])
+    @@index([status, updatedAt])
+}
+
+model Message {
+    id String @id @default(uuid())
+    ticketId String
+    ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    direction MessageDirection
+    source MessageSource
+    isFirst Boolean @default(false)
+    senderEmail String
+    text String
+    emailMessageId String?
+    parentReply Message? @relation("Replies", fields: [emailMessageId], references: [id], onDelete: SetNull)
+    replies Message[] @relation("Replies")
+    isDeleted Boolean @default(false) 
+    attachement Attachement[]
+    createdAt DateTime @default(now())
+    @@index([ticketId, createdAt])
+}
+
+model Attachement {
+    id String @id @default(uuid())
+    messageId String
+    message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+    fileName String
+    fileUrl String
+    createdAt DateTime @default(now())
+    @@index([messageId])
+}
