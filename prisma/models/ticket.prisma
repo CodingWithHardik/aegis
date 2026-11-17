@@ -43,8 +43,9 @@ model Message {
     isFirst Boolean @default(false)
     senderEmail String
     text String
-    emailMessageId String?
-    parentReply Message? @relation("Replies", fields: [emailMessageId], references: [id], onDelete: SetNull)
+    emailMessageId String? @unique
+    parentReplyId String?
+    parentReply Message? @relation("Replies", fields: [parentReplyId], references: [id], onDelete: SetNull)
     replies Message[] @relation("Replies")
     isDeleted Boolean @default(false) 
     attachement Attachement[]
