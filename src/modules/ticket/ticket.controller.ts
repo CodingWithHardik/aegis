@@ -9,6 +9,18 @@ import { sendResponse } from "../../utils/common/response/AppResponse";
 import { env } from "../../config/env.config";
 
 export class TicketController {
+    createTicket = catchAsync(async (ctx: Context<{ body: CreateTicketInputType }>) => {
+        const result = await ticketService.createTicketService(ctx.body);
+
+        return sendResponse(ctx.set, 201, {
+            success: true,
+            message: "Ticket Created Successfully",
+            data: {
+                ticket: result
+            }
+        })
+    })
+
     adminTicketAuth = catchAsync(async (ctx: Context<{}, AuthSingleton>) => {
         if (!ctx.user.isSuperAdmin) {
             throw new AppError("Unauthorized", 403)

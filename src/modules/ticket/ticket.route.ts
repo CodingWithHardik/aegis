@@ -10,6 +10,17 @@ const router = new Elysia({ prefix: "/ticket" });
 const ticketController = new TicketController();
 
 router.use(
+    new Elysia()
+        .post("/create", 
+            ...validated<typeof createTicketSchema>(
+                createTicketSchema,
+                ticketController.createTicket,
+                { tags: ["Ticket"], summary: "Generate A Ticket" }
+            )
+        )
+)
+
+router.use(
     new Elysia({ prefix: "/admin" })
         .get("/callback",
             ...validated<{ query: typeof adminTicketCallbackSchema }>(
