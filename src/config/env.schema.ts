@@ -28,6 +28,9 @@ export const envSchema = z.object({
     ACCESS_TOKEN_EXPIRES_IN: z.string(),
     REFRESH_TOKEN_SECRET: z.string(),
     REFRESH_TOKEN_EXPIRES_IN: z.string(),
+    TICKET_ADMIN_OAUTH_CLIENT_ID: z.string(),
+    TICKET_ADMIN_OAUTH_CLIENT_SECRET: z.string(),
+    TICKET_ADMIN_OAUTH_CALLBACK_URL: z.string(),
 })
 
 export type Env = z.infer<typeof envSchema>;
