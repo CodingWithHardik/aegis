@@ -4,7 +4,7 @@ export const createTicketSchema = z
     .object({
         name: z.string(),
         phoneNo: z.string().trim(),
-        email: z.string().trim(),
+        email: z.string().trim().toLowerCase().pipe(z.email()),
         message: z.string(),
     })
     .strict();
