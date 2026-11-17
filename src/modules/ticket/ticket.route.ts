@@ -3,7 +3,6 @@ import { validated } from "../../utils/common/validation/validated";
 import { adminTicketCallbackSchema, createTicketSchema } from "./ticket.schema";
 import { TicketController } from "./ticket.controller";
 import { authMiddleware } from "../../middleware/authentication.middleware";
-import { AuthSingleton } from "../../types/singleton";
 
 const router = new Elysia({ prefix: "/ticket" });
 

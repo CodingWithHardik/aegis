@@ -5,9 +5,10 @@ import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { ITicketRepository } from "./ticket.interface";
 import { CreateTicketInputType } from "./ticket.schema";
+import { TicketWithMessage } from "./ticket.types";
 
 export class TicketRepository implements ITicketRepository {
-    async createTicket(data: CreateTicketInputType, ticketId: string, user: User | null): Promise<Ticket> {
+    async createTicket(data: CreateTicketInputType, ticketId: string, user: User | null): Promise<TicketWithMessage> {
         return measureQuery("createTicket", () =>
             prisma.ticket.create({
                 data: {
@@ -26,6 +27,9 @@ export class TicketRepository implements ITicketRepository {
                         }
                     },
                     ...(user ? { user: { connect: { id: user.id }}} : {})
+                },
+                include: {
+                    message: true,
                 }
             })
         )

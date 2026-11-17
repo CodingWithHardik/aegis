@@ -47,7 +47,7 @@ export class TicketService {
             throw new AppError("Email Not Sent", 500)
         } 
         const messageId = sendEmail.info.messageId;
-        await this.ticketRepo.addTicketMessageId(ticket.id, messageId)
+        await this.ticketRepo.addTicketMessageId(temporary.message[0].id, messageId)
         return toTicketResponse(ticket)
     }
 

@@ -1,3 +1,4 @@
+import { Prisma } from "../../../.prisma/client";
 import { MessageDirection, MessageSource, TicketStatus } from "../../../.prisma/enums";
 
 export type TicketConfigResponseType = {
@@ -34,3 +35,7 @@ export type TicketMessageResponseType = {
     isDeleted: boolean;
     createdAt: Date;
 }
+
+export type TicketWithMessage = Prisma.TicketGetPayload<{
+    include: { message: true }
+}>;
