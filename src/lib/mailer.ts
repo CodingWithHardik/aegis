@@ -3,6 +3,7 @@ import { env } from "../config/env.config";
 import nodemailer, { Mail } from "nodemailer";
 import { logger } from "../config/logger";
 import { mailLimiter } from "../plugins/mailLimiter/mailLimiter.index";
+import { MailerResults } from "../types/MailerResults";
 
 const createTransporter = (accessKeyId: string, secretaAccessKey: string) => {
     const sesClient = new SESv2Client({
@@ -46,23 +47,25 @@ const secondaryTransporter = env.AWS_SES_ACCESS_KEY_ID_SECONDARY && env.AWS_SES_
         env.AWS_SES_SECRET_ACCESS_KEY_SECONDARY,
     ) : null;
 
-export const sendMail = async (options: Mail.Options) => {
+export const sendMail = async (options: Mail.Options): Promise<MailerResults> => {
     try {
-        return await primaryTransporter.sendMail(options)
+        const mailPrimary = await primaryTransporter.sendMail(options);
+        return { ok: true, info: mailPrimary };
     } catch (primaryError) {
-        if (!secondaryTransporter) {
-            return logger.warn({
-                event: "PRIMARY_MAILER_ERROR",
-                message: primaryError,
-            })
-        }
+        logger.warn({
+            event: "PRIMARY_MAILER_ERROR",
+            message: primaryError,
+        })
+        if (!secondaryTransporter) return { ok: false, error: primaryError }
         try {
-            return await secondaryTransporter.sendMail(options);
+            const mailSecondary = await secondaryTransporter.sendMail(options);
+            return { ok: true, info: mailSecondary }
         } catch (secondaryError) {
-            return logger.warn({
+            logger.warn({
                 event: "SECONDARY_MAILER_ERROR",
                 message: secondaryError,
             })
+            return { ok: false, error: secondaryError }
         }
     }
 }
