@@ -14,5 +14,6 @@ export const cacheKeys = {
     committeeId: (committeeId: string) => `committee:committeeId:${committeeId}`,
     register: (registerId?: string, eventId?: string, userId?: string) => `register:id:${registerId}:eventId:${eventId}userId:${userId}`,
     registrationId: (memberId: string) => `register:id:${memberId}`,
-    subscriptionNewsletter: (email: string) => `subscriptionNewsletter:${email}`
+    subscriptionNewsletter: (email: string) => `subscriptionNewsletter:${email}`,
+    ticketConfig: () => `ticket:config:1`
 }
