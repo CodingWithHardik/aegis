@@ -48,6 +48,8 @@ app.use(
         { name: "Team", description: "Team Endpoints" },
         { name: "NewsLetters", description: "Newsletter Endpoints" },
         { name: "Attendance", description: "Attendance Endpoints" },
+        { name: "Ticket", description: "Ticket Endpoints" },
+        { name: "Admin", description: "Admin Secrets Endpoints" },
         { name: "Health", description: "Health Checks" },
       ]
     },
