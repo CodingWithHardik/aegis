@@ -82,5 +82,11 @@ import { HealthController } from "./modules/health-check/health.controller";
 import { versionManager } from "./plugins/version/version.manager";
 import z from "zod";
 import { openapi } from "@elysiajs/openapi";
+import { MailWatcherPlugin } from "./plugins/mailWatcher/mailWatcher.index";
+import { MailWatcherRepository } from "./plugins/mailWatcher/mailWatcher.repository";
 
-app.use(versionManager);
+app.use(versionManager)
+app.use(MailWatcherPlugin({
+  store: MailWatcherRepository,
+  pollMs: 1000,
+}))

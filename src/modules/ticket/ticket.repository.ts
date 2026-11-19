@@ -73,6 +73,8 @@ export class TicketRepository implements ITicketRepository {
                     accessToken,
                     expiresAt: expiryDate,
                     email,
+                    historyId: null,
+                    disconnectedAt: null,
                     ...(name !== undefined && { name }),
                 },
                 update: {
@@ -80,6 +82,8 @@ export class TicketRepository implements ITicketRepository {
                     accessToken,
                     expiresAt: expiryDate,
                     email,
+                    historyId: null,
+                    disconnectedAt: null,
                     ...(name !== undefined && { name }),
                 },
             })
