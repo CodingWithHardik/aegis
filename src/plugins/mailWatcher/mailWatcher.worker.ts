@@ -50,10 +50,7 @@ export class mailWatcher {
         this.stopped = false;
         this.failures = 0
         const gen = ++this.gen;
-        logger.info({
-            event: "MAIL_WATCHER",
-            message: "STARTED"
-        })
+        logger.info(`Mail Watcher has started`)
         void this.tick(gen)
     }
 
@@ -61,10 +58,7 @@ export class mailWatcher {
         this.stopped = true;
         this.gen++;
         clearTimeout(this.timer)
-        logger.warn({
-            event: "MAIL_WATCHER",
-            message: "STOPPED"
-        })
+        logger.info(`Mail Watcher has stopped`)
     }
 
     private async tick(gen: number): Promise<void> {
