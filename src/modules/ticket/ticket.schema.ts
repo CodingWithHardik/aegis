@@ -14,5 +14,12 @@ export const adminTicketCallbackSchema = z
         code: z.string().trim(),
     })
 
+export const replyTicketSchema = z
+    .object({
+        ticketId: z.string(),
+        message: z.string(),
+    })
+
 export type CreateTicketInputType = z.infer<typeof createTicketSchema>;
 export type AdminTicketCallbackInputType = z.infer<typeof adminTicketCallbackSchema>;
+export type ReplyTicketInputType = z.infer<typeof replyTicketSchema>;

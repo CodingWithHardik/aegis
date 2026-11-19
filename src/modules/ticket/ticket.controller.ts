@@ -1,6 +1,6 @@
 import { Context, redirect } from "elysia";
 import { catchAsync } from "../../utils/common/helpers/CacheAsync";
-import { AdminTicketCallbackInputType, CreateTicketInputType } from "./ticket.schema";
+import { AdminTicketCallbackInputType, CreateTicketInputType, ReplyTicketInputType } from "./ticket.schema";
 import { AuthSingleton } from "../../types/singleton";
 import { AppError } from "../../utils/common/Errors/AppError";
 import { ticketOAuthClient } from "../../lib/ticketOauthClient";
@@ -50,5 +50,17 @@ export class TicketController {
         await ticketService.createAdminCallback(ctx.query);
 
         return redirect(env.FRONTEND_URL, 302)
+    })
+
+    replyTicket = catchAsync(async (ctx: Context<{ body: ReplyTicketInputType }, AuthSingleton>) => {
+        const result = await ticketService.replyTicket(ctx.body, ctx.user);
+
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "Successfully Replied to the ticket",
+            data: {
+                messgae: result,
+            }
+        })
     })
 }

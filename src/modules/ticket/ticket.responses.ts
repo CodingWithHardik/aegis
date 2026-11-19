@@ -1,4 +1,4 @@
-import { TicketConfigResponseType, TicketResponseType } from "./ticket.types";
+import { TicketConfigResponseType, TicketMessageResponseType, TicketResponseType } from "./ticket.types";
 
 export const toTicketAdminConfigResponse = (ticketConfig: TicketConfigResponseType) => {
     return {
@@ -19,5 +19,14 @@ export const toTicketResponse = (ticket: TicketResponseType) => {
         userExits: ticket.userConnected,
         status: ticket.status,
         createdAt: ticket.createdAt
+    }
+}
+
+export const toMessageResponse = (message: TicketMessageResponseType) => {
+    return {
+        id: message.id,
+        ticketId: message.ticketId,
+        text: message.text,
+        createdAt: message.createdAt,
     }
 }

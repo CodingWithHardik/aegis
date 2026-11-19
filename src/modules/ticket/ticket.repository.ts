@@ -1,4 +1,4 @@
-import { Message, Ticket, TicketConfigOAuthToken, User } from "../../../.prisma/client";
+import { Message, Team, Ticket, TicketConfigOAuthToken, User } from "../../../.prisma/client";
 import { prisma } from "../../lib/prisma";
 import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
@@ -112,6 +112,69 @@ export class TicketRepository implements ITicketRepository {
                         email,
                     }
                 })
+        )
+    }
+
+    async getActiveYearTeam(userId: string): Promise<Team | null> {
+        return measureQuery("getActiveYearTeam", () =>
+            prisma.team.findFirst({
+                where: {
+                    userId,
+                    event: {
+                        year: new Date().getFullYear(),
+                        isDeleted: false,
+                        status: "ACTIVE"
+                    }
+                }
+            })
+        )
+    }
+
+    async getTicketById(id: string): Promise<Ticket | null> {
+        return measureQuery("getTicketById", () => 
+            prisma.ticket.findUnique({
+                where: {
+                    id,
+                }
+            })
+        )
+    }
+
+    async getMessages(id: string): Promise<Message[]> {
+        return measureQuery("getMessages", () =>
+            prisma.message.findMany({
+                where: {
+                    isDeleted: false,
+                    ticketId: id,
+                },
+                orderBy: [{ createdAt: "asc" }, { isFirst: "desc" }]
+            })
+        )
+    }
+
+    async addMessage(ticketId: string, isStaff: boolean, senderEmail: string, message: string, messageId: string | null, lastMessagedbId: string | null): Promise<Message> {
+        return measureQuery("addMessage", () => 
+            prisma.message.create({
+                data: {
+                    ticket: {
+                        connect: {
+                            id: ticketId
+                        }
+                    },
+                    direction: isStaff ? "OUTBOUND" : "INBOUND",
+                    source: isStaff ? "ADMIN" : "WEBSITE",
+                    senderEmail,
+                    text: message,
+                    ...(messageId ? { emailMessageId: messageId } : {}),
+                    ...(lastMessagedbId ? {
+                        parentReply: {
+                            connect: {
+                                id: lastMessagedbId
+                            }
+                        }
+                    } : null) 
+                }
+            })
         )
     }
 }

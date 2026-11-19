@@ -31,6 +31,7 @@ export const envSchema = z.object({
     TICKET_ADMIN_OAUTH_CLIENT_ID: z.string(),
     TICKET_ADMIN_OAUTH_CLIENT_SECRET: z.string(),
     TICKET_ADMIN_OAUTH_CALLBACK_URL: z.string(),
+    TICKET_MAIL_THRESHOLD: z.coerce.number().int().positive(),
 })
 
 export type Env = z.infer<typeof envSchema>;
