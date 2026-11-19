@@ -98,6 +98,7 @@ export class TicketService {
         const lastSentMessage = messages
             .filter((message) => message.isFirst === false)
             .filter((message) => message.source === "WEBSITE")
+            .filter((message) => message.emailMessageId !== null)
             .at(-1);
         const authAdmin = await this.ticketRepo.getTicketConfig();
         if (!authAdmin) {
