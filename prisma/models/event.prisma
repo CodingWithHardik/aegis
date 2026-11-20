@@ -13,6 +13,7 @@ model Event {
     committees Committee[]
     members Member[]
     attendance Attendance[]
+    announcements Announcement[]
     startDate DateTime
     endDate DateTime
     createdAt DateTime @default(now())
@@ -62,6 +63,7 @@ model Committee {
     eventId String
     members Member[]
     attendance Attendance[]
+    announcements Announcement[]
     attendanceStatus AttendanceStatus @default(NOT_MARKED)
     event Event @relation(fields: [eventId], references: [id])
     createdAt DateTime @default(now())

@@ -1,0 +1,44 @@
+model Announcement {
+    id String @id @default(uuid())
+    title String
+    text String
+    priority AnnouncementPriority @default(NORMAL)
+    isPinned Boolean
+    audience AnnouncementAudience @default(EVENT)
+    eventId String
+    event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    committeeId String?
+    committee Committee? @relation(fields: [committeeId], references: [id], onDelete: Cascade)
+    recipients AnnouncementRecipient[]
+    authorId String
+    author User @relation(fields: [authorId], references: [id])
+    expiresAt DateTime?
+    isDeleted Boolean @default(false)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model AnnouncementRecipient {
+    id String @id @default(uuid())
+    announcementId String
+    announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+    memberId String
+    member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+    readAt DateTime?
+    createdAt DateTime @default(now())
+    @@unique([announcementId, memberId])
+    @@index([memberId])
+}
+
+enum AnnouncementAudience {
+    EVENT
+    COMMITTEE
+    BOARD
+    MEMBERS
+}
+
+enum AnnouncementPriority {
+    NORMAL
+    IMPORTANT
+    URGENT 
+}
