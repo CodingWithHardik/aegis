@@ -49,6 +49,7 @@ app.use(
         { name: "NewsLetters", description: "Newsletter Endpoints" },
         { name: "Attendance", description: "Attendance Endpoints" },
         { name: "Ticket", description: "Ticket Endpoints" },
+        { name: "Announcement", description: "Announcement Endpoints" },
         { name: "Admin", description: "Admin Secrets Endpoints" },
         { name: "Health", description: "Health Checks" },
       ]
