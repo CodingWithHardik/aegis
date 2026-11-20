@@ -36,9 +36,9 @@ app.use(
     specPath: "/docs/json",
     documentation: {
       info: {
-        title: "AEGIS DPSKMUN API",
+        title: "AEGIS MUN API",
         version: '1.0.0',
-        description: "API docs for dpskmun backend"
+        description: "API docs for mun backend"
       },
       tags: [
         { name: "Auth", description: "Authentication Endpoints" },
