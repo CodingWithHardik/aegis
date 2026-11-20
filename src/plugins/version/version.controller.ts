@@ -7,6 +7,7 @@ import registerRouter from "../../modules/register/register.route";
 import newsletterRouter from "../../modules/newsletter/newsletter.route";
 import attendanceRouter from "../../modules/attendance/attendance.route";
 import ticketRouter from "../../modules/ticket/ticket.route";
+import announcementRouter from "../../modules/announcement/announcement.route";
 
 export const versionRouteController = new Elysia()
 .use(authRouter)
@@ -16,4 +17,5 @@ export const versionRouteController = new Elysia()
 .use(registerRouter)
 .use(newsletterRouter)
 .use(attendanceRouter)
-.use(ticketRouter);
+.use(ticketRouter)
+.use(announcementRouter);
