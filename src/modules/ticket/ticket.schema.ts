@@ -20,6 +20,20 @@ export const replyTicketSchema = z
         message: z.string(),
     })
 
+export const getTicket = z
+    .object({
+        id: z.string().optional(),
+        ticketId: z.string().optional(),
+        email: z.string().trim().toLowerCase().pipe(z.email()).optional(),
+        userId: z.string().optional(),
+        status: z.enum([
+            "OPEN",
+            "RESOLVED",
+            "CLOSED"
+        ]).optional(),
+    })
+
 export type CreateTicketInputType = z.infer<typeof createTicketSchema>;
 export type AdminTicketCallbackInputType = z.infer<typeof adminTicketCallbackSchema>;
 export type ReplyTicketInputType = z.infer<typeof replyTicketSchema>;
+export type GetTicketInputType = z.infer<typeof getTicket>;

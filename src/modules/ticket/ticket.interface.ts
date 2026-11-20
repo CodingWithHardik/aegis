@@ -1,5 +1,5 @@
 import { Message, Team, Ticket, TicketConfigOAuthToken, User } from "../../../.prisma/client";
-import { CreateTicketInputType } from "./ticket.schema";
+import { CreateTicketInputType, GetTicketDetailInputType, GetTicketInputType } from "./ticket.schema";
 import { TicketWithMessage } from "./ticket.types";
 
 export interface ITicketRepository {
@@ -13,4 +13,5 @@ export interface ITicketRepository {
     getTicketById(id: string): Promise<Ticket | null>;
     getMessages(id: string): Promise<Message[]>;
     addMessage(ticketId: string, isStaff: boolean, senderEmail: string, message: string, messageId: string | null, lastMessagedbId: string | null): Promise<Message>;
+    getTicket(data: GetTicketInputType, isStaff: boolean, user: User): Promise<Ticket[]>
 }

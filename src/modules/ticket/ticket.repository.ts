@@ -1,10 +1,10 @@
-import { Message, Team, Ticket, TicketConfigOAuthToken, User } from "../../../.prisma/client";
+import { Message, Team, Ticket, TicketConfigOAuthToken, TicketStatus, User } from "../../../.prisma/client";
 import { prisma } from "../../lib/prisma";
 import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { ITicketRepository } from "./ticket.interface";
-import { CreateTicketInputType } from "./ticket.schema";
+import { CreateTicketInputType, GetTicketInputType } from "./ticket.schema";
 import { TicketWithMessage } from "./ticket.types";
 
 export class TicketRepository implements ITicketRepository {
@@ -177,6 +177,28 @@ export class TicketRepository implements ITicketRepository {
                             }
                         }
                     } : null) 
+                }
+            })
+        )
+    }
+
+    async getTicket(data: GetTicketInputType, isStaff: boolean, user: User): Promise<Ticket[]> {
+        return measureQuery("getTicket", () =>
+            prisma.ticket.findMany({
+                where: {
+                    ...(data.id ? { id: data.id } : {}),
+                    ...(data.ticketId ? { ticketId: data.ticketId } : {}),
+                    ...(!isStaff && (data.email || data.userId) ? {
+                        OR: [
+                            ...(user.email ? [{ customerEmail: user.email }] : []),
+                            ...(user.id ? [{ userId: user.id }] : [])
+                        ]
+                    } : {}),
+                    ...(data.status ? {
+                        status: data.status === TicketStatus.OPEN
+                            ? { in: [TicketStatus.OPEN, TicketStatus.WAITING] }
+                            : {}
+                    } : {})
                 }
             })
         )

@@ -1,4 +1,4 @@
-import { TicketConfigResponseType, TicketMessageResponseType, TicketResponseType } from "./ticket.types";
+import { TicketConfigResponseType, TicketMessageResponseType, TicketResponseType, TicketWithMessage } from "./ticket.types";
 
 export const toTicketAdminConfigResponse = (ticketConfig: TicketConfigResponseType) => {
     return {
@@ -30,3 +30,7 @@ export const toMessageResponse = (message: TicketMessageResponseType) => {
         createdAt: message.createdAt,
     }
 }
+
+export const toTicketGetResponse = (ticket: TicketResponseType[]) => {
+    return ticket.map(( ticket ) => toTicketResponse(ticket))
+} 

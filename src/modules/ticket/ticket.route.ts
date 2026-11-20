@@ -1,6 +1,6 @@
 import Elysia from "elysia";
 import { validated } from "../../utils/common/validation/validated";
-import { adminTicketCallbackSchema, createTicketSchema, replyTicketSchema } from "./ticket.schema";
+import { adminTicketCallbackSchema, createTicketSchema, getTicket, getTicketDetails, replyTicketSchema } from "./ticket.schema";
 import { TicketController } from "./ticket.controller";
 import { authMiddleware } from "../../middleware/authentication.middleware";
 import { AuthSingleton } from "../../types/singleton";
@@ -28,6 +28,13 @@ router.use(
                 replyTicketSchema,
                 ticketController.replyTicket,
                 { tags: ["Ticket"], summary: "Reply to a Ticket" }
+            )
+        )
+        .post("/get",
+            ...validated<typeof getTicket, AuthSingleton>(
+                getTicket,
+                ticketController.getTicket,
+                { tags: ["Ticket"], summary: "Get Tickets All" }
             )
         )
 )

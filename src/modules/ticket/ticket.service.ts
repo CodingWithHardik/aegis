@@ -1,13 +1,13 @@
 import { randomUUID } from "crypto";
 import { ITicketRepository } from "./ticket.interface";
-import { AdminTicketCallbackInputType, CreateTicketInputType, ReplyTicketInputType } from "./ticket.schema";
+import { AdminTicketCallbackInputType, CreateTicketInputType, GetTicketInputType, ReplyTicketInputType } from "./ticket.schema";
 import { render } from "react-email";
 import { createTicketEmail } from "../../../emails/ticket/createTicket"
 import { sendMail } from "../../lib/mailer";
 import { AppError } from "../../utils/common/Errors/AppError";
 import { ticketOAuthClient } from "../../lib/ticketOauthClient";
 import { env } from "../../config/env.config";
-import { toMessageResponse, toTicketAdminConfigResponse, toTicketResponse } from "./ticket.responses";
+import { toMessageResponse, toTicketAdminConfigResponse, toTicketGetResponse, toTicketResponse } from "./ticket.responses";
 import { User } from "../../../.prisma/client";
 import { replyTicket } from "../../../emails/ticket/replyTicket";
 import { replyReceived } from "../../../emails/ticket/replyReceived";
@@ -128,5 +128,16 @@ export class TicketService {
         }
         const newMessage = await this.ticketRepo.addMessage(ticket.id, isStaff, authAdmin.email, data.message, messageId, lastmessage?.id ?? null);
         return toMessageResponse(newMessage)
+    }
+
+    async getTicket(data: GetTicketInputType, user: User) {
+        const isStaff = user.isSuperAdmin ? true : !!(await this.ticketRepo.getActiveYearTeam(user.id))
+        const tickets = await this.ticketRepo.getTicket(data, isStaff, user);
+        const filterTicket = tickets.filter((ticket) => {
+            if (data.email && ticket.customerEmail !== data.email) return false;
+            if (data.userId && ticket.userId !== data.userId) return false;
+            return true
+        })
+        return toTicketGetResponse(filterTicket);
     }
 }
