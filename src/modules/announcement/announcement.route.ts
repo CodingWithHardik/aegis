@@ -1,7 +1,7 @@
 import Elysia from "elysia";
 import { authMiddleware } from "../../middleware/authentication.middleware";
 import { validated } from "../../utils/common/validation/validated";
-import { createAnnouncementSchema } from "./announcement.schema";
+import { createAnnouncementSchema, listAnnouncementScheme } from "./announcement.schema";
 import { AuthSingleton } from "../../types/singleton";
 import { AnnouncementController } from "./announcement.controller";
 
@@ -19,4 +19,13 @@ router.use(
                 { tags: ["Announcement"], summary: "Create Custom Announcement" }
             )
         )
+        .post("/list",
+            ...validated<typeof listAnnouncementScheme, AuthSingleton>(
+                listAnnouncementScheme,
+                announcementController.getAnnouncements,
+                { tags: ["Announcement"], summary: "Get Announcement" }
+            )
+        )
 )
+
+export default router;

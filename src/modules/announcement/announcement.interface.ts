@@ -1,5 +1,6 @@
 import { Announcement, Committee, Event, Member, Team } from "../../../.prisma/client";
-import { CreateAnnouncementData } from "./announcement.types";
+import { AnnouncementWhereInput } from "../../../.prisma/models";
+import { AnnouncementListType, CreateAnnouncementData } from "./announcement.types";
 
 export interface IAnnouncementRepository {
     getEventById(eventId: string): Promise<Event | null>;
@@ -8,4 +9,5 @@ export interface IAnnouncementRepository {
     getMemberByUser(userId: string, eventId: string): Promise<Member | null>;
     countMembers(ids: string[], eventId: string, committeeId?: string): Promise<number>;
     createAnnouncement(data: CreateAnnouncementData): Promise<Announcement>;
+    getAnnouncement(where: AnnouncementWhereInput, memberId: string | null, page: number, limit: number): Promise<{ items: AnnouncementListType[]; total: number }>;
 }

@@ -1,3 +1,4 @@
+import { Announcement } from "../../../.prisma/client";
 import { AnnouncementAudience, AnnouncementPriority } from "../../../.prisma/enums";
 
 export type CreateAnnouncementData = {
@@ -12,4 +13,26 @@ export type CreateAnnouncementData = {
     publishedAt?: Date;
     expiresAt: Date | null;
     memberIds: string[];
+}
+
+export type AnnouncementListType = Announcement & {
+    author: {
+        id: string;
+        name: string;
+    };
+    committee: {
+        id: string;
+        name: string;
+        slug: string
+    } | null;
+    recipients: {
+        readAt: Date | null;
+    }[]
+}
+
+export type PaginationMeta = {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
 }

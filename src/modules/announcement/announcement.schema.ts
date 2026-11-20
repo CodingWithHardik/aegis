@@ -87,4 +87,13 @@ export const createAnnouncementSchema = z
         }
     })
 
+export const listAnnouncementScheme = z
+    .object({
+        eventId: z.string().trim(),
+        page: z.number().int().min(1).default(1),
+        limit: z.number().int().min(1).max(50).default(25)
+    })
+    .strict()
+
 export type CreateAnnouncementInputType = z.infer<typeof createAnnouncementSchema>;
+export type ListAnnouncementInputType = z.infer<typeof listAnnouncementScheme>;

@@ -1,9 +1,10 @@
 import { Announcement, Member, User } from "../../../.prisma/client";
 import { logger } from "../../config/logger";
 import { AppError } from "../../utils/common/Errors/AppError";
+import { buildMemberVisibility, buildTeamVisibility, toPaginationMeta } from "./announcement.helper";
 import { IAnnouncementRepository } from "./announcement.interface";
-import { toAnnouncementResponse } from "./announcement.response";
-import { CreateAnnouncementInputType } from "./announcement.schema";
+import { toAnnouncementListResponse, toAnnouncementResponse } from "./announcement.response";
+import { CreateAnnouncementInputType, ListAnnouncementInputType } from "./announcement.schema";
 
 export class AnnouncementService {
     constructor(private announcementRepo: IAnnouncementRepository) {}
@@ -80,4 +81,30 @@ export class AnnouncementService {
 
         return toAnnouncementResponse(announcement)
     } 
+
+    async getAnnouncement(data: ListAnnouncementInputType, user: User) {
+        const event = await this.announcementRepo.getEventById(data.eventId);
+        if (!event || event.isDeleted) {
+            throw new AppError("Event Not found", 422)
+        }
+
+        const { isTeam, member } = await this.resolveAccess(user, data.eventId)
+        let where;
+        if (isTeam) {
+            where = buildTeamVisibility(data.eventId);
+        } else if (member) {
+            where = buildMemberVisibility(member, new Date())
+        } else {
+            throw new AppError("Unauthorized", 403)
+        }
+
+        const { items, total } = await this.announcementRepo.getAnnouncement(
+            where,
+            member?.id ?? null,
+            data.page,
+            data.limit,
+        )
+
+        return toAnnouncementListResponse(items, toPaginationMeta(data.page, data.limit, total))
+    }
 }

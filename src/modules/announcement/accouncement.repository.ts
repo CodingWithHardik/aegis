@@ -1,10 +1,11 @@
 import { Announcement, Committee, Event, Member, Team } from "../../../.prisma/client";
+import { AnnouncementWhereInput } from "../../../.prisma/models";
 import { prisma } from "../../lib/prisma";
 import { cachedQuery } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { IAnnouncementRepository } from "./announcement.interface";
-import { CreateAnnouncementData } from "./announcement.types";
+import { AnnouncementListType, CreateAnnouncementData } from "./announcement.types";
 
 export class AnnouncementRepository implements IAnnouncementRepository {
     async getEventById(eventId: string): Promise<Event | null> {
@@ -109,5 +110,34 @@ export class AnnouncementRepository implements IAnnouncementRepository {
                     }
                 })
         )
+    }
+
+    async getAnnouncement(where: AnnouncementWhereInput, memberId: string | null, page: number, limit: number): Promise<{ items: AnnouncementListType[]; total: number; }> {
+        const [items, total] = await measureQuery(
+            "getAnnouncement",
+            () => 
+                prisma.$transaction([
+                    prisma.announcement.findMany({
+                        where,
+                        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
+                        skip: (page - 1) * limit,
+                        take: limit,
+                        include: {
+                            author: {
+                                select: { id: true, name: true }
+                            },
+                            committee: {
+                                select: { id: true, name: true, slug: true }
+                            },
+                            recipients: {
+                                where: { memberId: memberId ?? "" },
+                                select: { readAt: true }
+                            }
+                        }
+                    }),
+                    prisma.announcement.count({ where })
+                ])
+        )
+        return { items, total }
     }
 }
