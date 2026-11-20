@@ -14,4 +14,5 @@ export interface ITicketRepository {
     getMessages(id: string): Promise<Message[]>;
     addMessage(ticketId: string, isStaff: boolean, senderEmail: string, message: string, messageId: string | null, lastMessagedbId: string | null): Promise<Message>;
     getTicket(data: GetTicketInputType, isStaff: boolean, user: User): Promise<Ticket[]>
+    getTicketDetail(data: GetTicketDetailInputType): Promise<TicketWithMessage | null>
 }

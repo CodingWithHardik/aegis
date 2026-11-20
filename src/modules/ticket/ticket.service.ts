@@ -1,13 +1,13 @@
 import { randomUUID } from "crypto";
 import { ITicketRepository } from "./ticket.interface";
-import { AdminTicketCallbackInputType, CreateTicketInputType, GetTicketInputType, ReplyTicketInputType } from "./ticket.schema";
+import { AdminTicketCallbackInputType, CreateTicketInputType, GetTicketDetailInputType, GetTicketInputType, ReplyTicketInputType } from "./ticket.schema";
 import { render } from "react-email";
 import { createTicketEmail } from "../../../emails/ticket/createTicket"
 import { sendMail } from "../../lib/mailer";
 import { AppError } from "../../utils/common/Errors/AppError";
 import { ticketOAuthClient } from "../../lib/ticketOauthClient";
 import { env } from "../../config/env.config";
-import { toMessageResponse, toTicketAdminConfigResponse, toTicketGetResponse, toTicketResponse } from "./ticket.responses";
+import { toMessageResponse, toTicketAdminConfigResponse, toTicketGetResponse, toTicketResponse, toTicketWithMessagesResponse } from "./ticket.responses";
 import { User } from "../../../.prisma/client";
 import { replyTicket } from "../../../emails/ticket/replyTicket";
 import { replyReceived } from "../../../emails/ticket/replyReceived";
@@ -139,5 +139,18 @@ export class TicketService {
             return true
         })
         return toTicketGetResponse(filterTicket);
+    }
+
+    async getTicketDetail(data: GetTicketDetailInputType, user: User) {
+        const isStaff = user.isSuperAdmin ? true : !!(await this.ticketRepo.getActiveYearTeam(user.id))
+        const ticket = await this.ticketRepo.getTicketById(data.ticketId);
+        const isOwner = !!ticket && (ticket.userConnected ? ticket.userId === user.id : ticket.customerEmail.toLowerCase() === user.email?.toLowerCase());
+        const ticketByMessage = await this.ticketRepo.getTicketDetail(data);
+        if (!ticket || !ticketByMessage || (!isStaff && !isOwner)) {
+            throw isStaff
+                ? new AppError("Ticket Not found", 404)
+                : new AppError("You dont have access to this ticket", 404)
+        }
+        return toTicketWithMessagesResponse(ticketByMessage)
     }
 }

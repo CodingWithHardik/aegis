@@ -4,7 +4,7 @@ import { cachedQuery, invalidate } from "../../utils/common/helpers/CacheQuery";
 import { measureQuery } from "../../utils/common/helpers/MeasureQuery";
 import { cacheKeys } from "../../utils/common/redis/cacheKeys";
 import { ITicketRepository } from "./ticket.interface";
-import { CreateTicketInputType, GetTicketInputType } from "./ticket.schema";
+import { CreateTicketInputType, GetTicketDetailInputType, GetTicketInputType } from "./ticket.schema";
 import { TicketWithMessage } from "./ticket.types";
 
 export class TicketRepository implements ITicketRepository {
@@ -199,6 +199,19 @@ export class TicketRepository implements ITicketRepository {
                             ? { in: [TicketStatus.OPEN, TicketStatus.WAITING] }
                             : {}
                     } : {})
+                }
+            })
+        )
+    }
+
+    async getTicketDetail(data: GetTicketDetailInputType): Promise<TicketWithMessage | null> {
+        return measureQuery("getTicketDetail", () =>
+            prisma.ticket.findUnique({
+                where: {
+                    id: data.ticketId,
+                },
+                include: {
+                    message: true,
                 }
             })
         )

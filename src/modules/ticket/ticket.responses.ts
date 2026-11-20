@@ -31,6 +31,21 @@ export const toMessageResponse = (message: TicketMessageResponseType) => {
     }
 }
 
+export const toGetMessageResponse = (message: TicketMessageResponseType) => {
+    return {
+        id: message.id,
+        direction: message.direction,
+        senderEmail: message.senderEmail,
+        text: message.text,
+        createdAt: message.createdAt,
+    }
+}
+
+export const toTicketWithMessagesResponse = (ticket: TicketWithMessage) => ({
+    ...toTicketResponse(ticket),
+    messages: ticket.message.map(toGetMessageResponse)
+})
+
 export const toTicketGetResponse = (ticket: TicketResponseType[]) => {
     return ticket.map(( ticket ) => toTicketResponse(ticket))
 } 

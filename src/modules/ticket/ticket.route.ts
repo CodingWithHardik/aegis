@@ -37,6 +37,13 @@ router.use(
                 { tags: ["Ticket"], summary: "Get Tickets All" }
             )
         )
+        .post("/getDetails",
+            ...validated<typeof getTicketDetails, AuthSingleton>(
+                getTicketDetails,
+                ticketController.getTicketDetail,
+                { tags: ["Ticket"], summary: "Get Tickets Detail" }
+            )
+        )
 )
 
 router.use(

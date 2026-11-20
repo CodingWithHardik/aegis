@@ -33,7 +33,13 @@ export const getTicket = z
         ]).optional(),
     })
 
+export const getTicketDetails = z
+    .object({
+        ticketId: z.string(),
+    })
+
 export type CreateTicketInputType = z.infer<typeof createTicketSchema>;
 export type AdminTicketCallbackInputType = z.infer<typeof adminTicketCallbackSchema>;
 export type ReplyTicketInputType = z.infer<typeof replyTicketSchema>;
 export type GetTicketInputType = z.infer<typeof getTicket>;
+export type GetTicketDetailInputType = z.infer<typeof getTicketDetails>;

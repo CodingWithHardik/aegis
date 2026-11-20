@@ -75,4 +75,16 @@ export class TicketController {
             }
         })
     })
+
+    getTicketDetail = catchAsync(async (ctx: Context<{ body: GetTicketDetailInputType }, AuthSingleton>) => {
+        const result = await ticketService.getTicketDetail(ctx.body, ctx.user);
+
+        return sendResponse(ctx.set, 200, {
+            success: true,
+            message: "Successfully Fetched Ticket Details",
+            data: {
+                ticket: result
+            }
+        })
+    })
 }
