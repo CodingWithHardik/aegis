@@ -23,6 +23,8 @@ export const envSchema = z.object({
     GLOBAL_RATE_LIMIT_SIZE: z.coerce.number().default(1000),
     LOGIN_RATE_LIMIT_WINDOW: z.coerce.number().default(1),
     LOGIN_RATE_LIMIT_SIZE: z.coerce.number().default(5),
+    TICKET_RATE_LIMIT_WINDOW: z.coerce.number().default(60),
+    TICKET_RATE_LIMIT_SIZE: z.coerce.number().default(3),
     SALT_ROUNDS: z.coerce.number().default(12),
     ACCESS_TOKEN_SECRET: z.string(),
     ACCESS_TOKEN_EXPIRES_IN: z.string(),

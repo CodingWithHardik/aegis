@@ -4,6 +4,7 @@ import { adminTicketCallbackSchema, createTicketSchema, getTicket, getTicketDeta
 import { TicketController } from "./ticket.controller";
 import { authMiddleware } from "../../middleware/authentication.middleware";
 import { AuthSingleton } from "../../types/singleton";
+import { ticketRateLimit } from "../../middleware/rate-limit/ticket-rate-limit.middleware";
 
 const router = new Elysia({ prefix: "/ticket" });
 
@@ -11,6 +12,7 @@ const ticketController = new TicketController();
 
 router.use(
     new Elysia()
+        .use(ticketRateLimit)
         .post("/create", 
             ...validated<typeof createTicketSchema>(
                 createTicketSchema,
