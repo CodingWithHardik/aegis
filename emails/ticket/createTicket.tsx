@@ -27,7 +27,7 @@ export function createTicketEmail(
                 <Img
                   alt="DPSKMUN LOGO"
                   height="112"
-                  src="https://i.ibb.co/4ZTpQSy0/DPSKMUN.png"
+                  src="https://cdn.hackclub.com/01a1fde1-2629-789b-9d06-d47070f92974/DPSKMUN.png"
                 />
               </Column>
             </Row>
@@ -50,7 +50,7 @@ export function createTicketEmail(
                 <Row className="table-fixed border-collapse border-spacing-0">
                   <Column className="h-[44px] w-[44px] overflow-hidden rounded-full p-0 leading-[0px]">
                     <Img
-                      src={avatar ?? "https://i.ibb.co/3ywHBg7h/AVATAR.png"}
+                      src={avatar ?? "https://cdn.hackclub.com/01a1fde1-26da-7ba0-9c49-eea1e285e9cb/AVATAR.png"}
                       width="36"
                       height="36"
                       alt={avatar ? name : "Avatar"}

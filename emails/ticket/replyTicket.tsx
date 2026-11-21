@@ -26,7 +26,7 @@ export function replyTicket(
                 <Img
                   alt="DPSKMUN LOGO"
                   height="112"
-                  src="https://i.ibb.co/4ZTpQSy0/DPSKMUN.png"
+                  src="https://cdn.hackclub.com/01a1fde1-2629-789b-9d06-d47070f92974/DPSKMUN.png"
                 />
               </Column>
             </Row>
