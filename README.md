@@ -75,4 +75,4 @@ Server Address will be `http://localhost:3000/`
 [API Documentation](https://aegis.dpskmun.com/docs)
 
 ## Screenshots 
-![](https://cdn.dpskmun.com/ss/AEGIS_DOCS_SS_1.png)
+![](https://cdn.hackclub.com/01a10807-0f9b-78a0-8608-ab97a70d6a7d/journal-1791136042018.png)
